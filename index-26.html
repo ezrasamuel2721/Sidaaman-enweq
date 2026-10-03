@@ -1,1 +1,1704 @@
-<!doctype html><html lang="am"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#173f35"><title>የሲዳማን እንወቅ</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>:root{--bg:#f7f6f1;--card:#fff;--ink:#17352e;--muted:#66736e;--line:#e5e4dc;--accent:#b28a43;--soft:#eef3ef}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Ethiopic",sans-serif;line-height:1.7}header{position:sticky;top:0;z-index:10;background:#f7f6f1ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}nav{max-width:1050px;margin:auto;padding:14px 18px;display:flex;justify-content:space-between}.brand{font-weight:900;font-size:20px}main{max-width:1050px;margin:auto;padding:25px 18px 60px}h1{font-size:clamp(28px,6vw,48px);margin:0}.muted{color:var(--muted)}.search{display:flex;gap:8px;margin:18px 0}.search input{flex:1;padding:14px;border:1px solid var(--line);border-radius:14px;font-size:16px}.btn,.back{border:0;border-radius:14px;padding:12px 16px;background:var(--ink);color:#fff;font-weight:800}.langs{display:flex;gap:7px;flex-wrap:wrap}.lang{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px}.active{background:var(--soft)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}.card,.item,.article,.empty{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}.card,.item{cursor:pointer}.card h3,.item h3{margin:0}.card small,.item small{color:var(--muted)}.list{display:grid;gap:10px}.section{margin-top:20px}.body{white-space:pre-wrap}.meta{border-top:1px solid var(--line);margin-top:20px;padding-top:12px;color:var(--muted);font-size:13px}footer{text-align:center;padding:30px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}@media(max-width:600px){.search{flex-direction:column}.btn{width:100%}}</style></head><body><header><nav><div class="brand">የሲዳማን እንወቅ</div><span class="muted">ታሪክ • ባህል • ቋንቋ • ማንነት</span></nav></header><main><h1>የሲዳማን እንወቅ</h1><p class="muted">የሲዳማን ታሪክ፣ ባህል፣ ቋንቋ፣ ኪነ-ጥበብ፣ ሥነ-ጽሑፍ፣ ስፖርት እና የዛሬውን ማኅበረሰብ በምንጭ የተደገፈ መረጃ ይወቁ።</p><div id="langs" class="langs"></div><div class="search"><input id="q" placeholder="ርዕስ፣ ቦታ፣ ተቋም ወይም ቁልፍ ቃል ፈልግ"><button class="btn" id="go">ፈልግ</button></div><div id="app" class="empty">መረጃውን በመጫን ላይ…</div></main><footer>የሲዳማን እንወቅ</footer><script>const URL='https://geznekrpdubpgsegseer.supabase.co',KEY='sb_publishable_v6cciBIeO_Gr3q3ZHto2vQp9vl6e',db=supabase.createClient(URL,KEY);let L='am',topics=[],articles=[];const F={am:['አማርኛ','title_am','summary_am','content_am'],sid:['Sidaamu Afoo','title_sid','summary_sid','content_sid'],en:['English','title_en','summary_en','content_en']};const $=x=>document.getElementById(x),esc=x=>String(x??'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])),title=x=>x?.[F[L][1]]||x?.title_am||x?.title_en||'';function langs(){ $('langs').innerHTML=Object.entries(F).map(([k,v])=>`<button class="lang ${L==k?'active':''}" data-l="${k}">${v[0]}</button>`).join('');document.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{L=b.dataset.l;langs();home()})}function children(id){return topics.filter(x=>x.parent_id===id).sort((a,b)=>a.sort_order-b.sort_order)}function home(){ $('app').className='grid';$('app').innerHTML=topics.filter(x=>!x.parent_id).sort((a,b)=>a.sort_order-b.sort_order).map(x=>`<div class="card" data-t="${x.id}"><h3>${esc(title(x))}</h3><small>${children(x.id).length} ንዑስ ርዕሶች</small></div>`).join('');document.querySelectorAll('[data-t]').forEach(x=>x.onclick=()=>topic(x.dataset.t))}function topic(id){let t=topics.find(x=>x.id===id),c=children(id);$('app').className='section';$('app').innerHTML=`<button class="back" id="back">← ወደ ዋና ገጽ</button><h2>${esc(title(t))}</h2><div class="list">${c.map(x=>`<div class="item" data-s="${x.id}"><h3>${esc(title(x))}</h3></div>`).join('')||'<div class="empty">የተዘጋጀ ንዑስ ርዕስ የለም።</div>'}</div>`;$('back').onclick=home;document.querySelectorAll('[data-s]').forEach(x=>x.onclick=()=>sub(x.dataset.s))}function sub(id){let t=topics.find(x=>x.id===id),a=articles.filter(x=>x.topic_id===id);$('app').innerHTML=`<button class="back" id="back">← ተመለስ</button><h2>${esc(title(t))}</h2><div class="list">${a.map(x=>`<div class="item" data-a="${x.id}"><h3>${esc(title(x))}</h3><small>${esc(x[F[L][2]]||x.summary_am||'')}</small></div>`).join('')||'<div class="empty">ይህ ንዑስ ርዕስ እስካሁን የታተመ ጽሑፍ የለውም።</div>'}</div>`;$('back').onclick=()=>topic(t.parent_id);document.querySelectorAll('[data-a]').forEach(x=>x.onclick=()=>article(x.dataset.a))}function article(id){let a=articles.find(x=>x.id===id),t=topics.find(x=>x.id===a.topic_id);$('app').innerHTML=`<article class="article"><button class="back" id="back">← ተመለስ</button><h2>${esc(title(a))}</h2><p><b>${esc(a[F[L][2]]||a.summary_am||'')}</b></p><div class="body">${esc(a[F[L][3]]||a.content_am||'')}</div><div class="meta">የታተመ እና በእውነታ ግምገማ የተረጋገጠ ጽሑፍ</div></article>`;$('back').onclick=()=>sub(t.id)}async function load(){let [t,a]=await Promise.all([db.from('sidama_topics').select('*').eq('is_active',true).order('sort_order'),db.from('sidama_articles').select('*').eq('editorial_status','published').order('sort_order').limit(1000)]);if(t.error||a.error){$('app').textContent='መረጃውን መጫን አልተቻለም።';return}topics=t.data||[];articles=a.data||[];langs();home()}$('go').onclick=async()=>{let q=$('q').value.trim();if(!q)return home();let r=await db.from('sidama_articles').select('*').eq('editorial_status','published').or(`title_am.ilike.%${q}%,title_sid.ilike.%${q}%,title_en.ilike.%${q}%,summary_am.ilike.%${q}%,summary_en.ilike.%${q}%`).limit(40);let a=r.data||[];$('app').innerHTML=`<button class="back" id="back">← ወደ ዋና ገጽ</button><h2>የፍለጋ ውጤት</h2><div class="list">${a.map(x=>`<div class="item" data-a="${x.id}"><h3>${esc(title(x))}</h3></div>`).join('')||'<div class="empty">ምንም የታተመ ውጤት አልተገኘም።</div>'}</div>`;$('back').onclick=home;document.querySelectorAll('[data-a]').forEach(x=>x.onclick=()=>article(x.dataset.a))};load();</script></body></html>
+<!DOCTYPE html>
+<html lang="am">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0b6b45">
+<title>ሲዳማን እንወቅ</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+  --primary:#087443;
+  --primary-dark:#055a34;
+  --secondary:#e8f5ee;
+  --background:#f5f8f6;
+  --card:#ffffff;
+  --text:#17251f;
+  --muted:#66756e;
+  --border:#dce7e1;
+  --shadow:0 8px 28px rgba(0,70,40,.09);
+}
+
+body{
+  margin:0;
+  background:var(--background);
+  color:var(--text);
+  font-family:Arial,"Noto Sans Ethiopic",sans-serif;
+  line-height:1.75;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(10px);
+}
+
+.nav{
+  max-width:1200px;
+  margin:auto;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.brand{
+  color:var(--primary-dark);
+  font-weight:800;
+  font-size:1.2rem;
+}
+
+.nav-actions{
+  display:flex;
+  gap:8px;
+}
+
+.btn{
+  border:1px solid var(--border);
+  background:#fff;
+  color:var(--text);
+  border-radius:10px;
+  padding:8px 13px;
+}
+
+.btn:hover{
+  border-color:var(--primary);
+}
+
+.btn.primary{
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+
+main{
+  max-width:1200px;
+  margin:auto;
+  padding:18px 16px 45px;
+}
+
+.hero{
+  background:linear-gradient(135deg,#e2f4ea,#ffffff);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:34px 22px;
+  margin-bottom:22px;
+  box-shadow:var(--shadow);
+}
+
+.hero h1{
+  margin:0;
+  color:var(--primary-dark);
+  font-size:clamp(1.9rem,5vw,3rem);
+}
+
+.hero p{
+  margin:8px 0 20px;
+  color:var(--muted);
+  font-size:1.05rem;
+}
+
+.languages{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:16px;
+}
+
+.language{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 15px;
+}
+
+.language.active{
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+
+.search-box{
+  display:flex;
+  gap:8px;
+}
+
+.search-box input{
+  flex:1;
+  min-width:0;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:12px;
+  padding:13px 15px;
+  outline:none;
+}
+
+.search-box input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(8,116,67,.1);
+}
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:20px 0 13px;
+}
+
+.section-title h2{
+  margin:0;
+  font-size:1.35rem;
+  color:var(--primary-dark);
+}
+
+.meta{
+  color:var(--muted);
+  font-size:.9rem;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:14px;
+}
+
+.card{
+  width:100%;
+  text-align:left;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  transition:.15s;
+}
+
+.card:hover{
+  transform:translateY(-2px);
+  border-color:#a9cbbb;
+}
+
+.card h3{
+  margin:0 0 6px;
+  color:var(--primary-dark);
+  font-size:1.08rem;
+}
+
+.card p{
+  margin:0;
+  color:var(--muted);
+}
+
+.back{
+  margin-bottom:14px;
+}
+
+.article{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:24px;
+  box-shadow:var(--shadow);
+}
+
+.article h1{
+  margin-top:0;
+  color:var(--primary-dark);
+}
+
+.article-summary{
+  color:var(--muted);
+  margin-bottom:18px;
+}
+
+.article-content{
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.notice{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:20px;
+  color:var(--muted);
+}
+
+.loading{
+  text-align:center;
+  padding:35px 15px;
+}
+
+footer{
+  background:#063d29;
+  color:#eaf7f0;
+  text-align:center;
+  padding:28px 16px;
+}
+
+footer a{
+  color:#fff;
+}
+
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+
+.menu-item{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:12px;
+  text-align:left;
+}
+
+.menu-item:hover{
+  border-color:var(--primary);
+}
+
+.panel{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:24px;
+  box-shadow:var(--shadow);
+}
+
+.panel h2{
+  margin-top:0;
+  color:var(--primary-dark);
+}
+
+.stat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+}
+
+.stat{
+  background:var(--secondary);
+  border-radius:14px;
+  padding:18px;
+  text-align:center;
+}
+
+.stat strong{
+  display:block;
+  color:var(--primary);
+  font-size:1.7rem;
+}
+
+dialog{
+  border:0;
+  border-radius:20px;
+  width:min(720px,calc(100% - 24px));
+  padding:0;
+  box-shadow:0 20px 70px rgba(0,0,0,.3);
+}
+
+dialog::backdrop{
+  background:rgba(0,0,0,.45);
+}
+
+.dialog-body{
+  padding:22px;
+}
+
+.dialog-body h2{
+  margin-top:0;
+  color:var(--primary-dark);
+}
+
+.dialog-footer{
+  margin-top:18px;
+  text-align:right;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.dark{
+  --background:#111815;
+  --card:#18221e;
+  --text:#edf5f1;
+  --muted:#aebdb5;
+  --border:#304139;
+  --secondary:#20352b;
+}
+
+.dark header{
+  background:rgba(24,34,30,.97);
+}
+
+.dark .btn,
+.dark .language,
+.dark .menu-item,
+.dark .search-box input,
+.dark dialog{
+  background:#18221e;
+  color:var(--text);
+}
+
+.dark footer{
+  background:#071b12;
+}
+
+@media(max-width:650px){
+  .nav{
+    align-items:flex-start;
+  }
+
+  .brand{
+    font-size:1rem;
+  }
+
+  .hero{
+    padding:25px 16px;
+  }
+
+  .search-box{
+    flex-direction:column;
+  }
+
+  .search-box .btn{
+    width:100%;
+  }
+
+  .article{
+    padding:18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">ሲዳማን እንወቅ</div>
+
+    <div class="nav-actions">
+      <button class="btn" id="homeBtn">🏠 መነሻ</button>
+      <button class="btn" id="menuBtn">☰ MENU</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+
+  <h1>🌿 ሲዳማን እንወቅ</h1>
+
+  <p>
+    የሲዳማን ማንነት የሚያስረዳ ዲጂታል መድረክ
+  </p>
+
+  <div class="languages" id="languages"></div>
+
+  <div class="search-box">
+    <input
+      id="searchInput"
+      type="search"
+      maxlength="300"
+      placeholder="በርዕስ፣ ንዑስ ርዕስ፣ ሰው ስም፣ ቦታ ወይም ቁልፍ ቃል ይፈልጉ..."
+    >
+
+    <button class="btn primary" id="searchBtn">
+      🔎 ፈልግ
+    </button>
+  </div>
+
+</section>
+
+<div id="view">
+  <div class="notice loading">
+    መረጃውን በመጫን ላይ…
+  </div>
+</div>
+
+</main>
+
+<footer>
+
+  <div>
+    የሲዳማን ማንነት የሚያስረዳ ዲጂታል መድረክ
+  </div>
+
+  <div style="margin-top:8px">
+    <a href="mailto:ezrasamuel2ezrasamuel2721@gmail.com">
+      ezrasamuel2ezrasamuel2721@gmail.com
+    </a>
+    ·
+    <a href="tel:0962244464">
+      0962244464
+    </a>
+  </div>
+
+  <div style="margin-top:8px">
+    ሲዳማን እንወቅ
+  </div>
+
+</footer>
+
+<dialog id="menuDialog">
+
+<div class="dialog-body">
+
+<h2>☰ MENU</h2>
+
+<div class="menu-grid">
+
+<button class="menu-item" data-menu="search">
+🔎 ፍለጋ
+</button>
+
+<button class="menu-item" data-menu="settings">
+⚙️ ቅንብሮች
+</button>
+
+<button class="menu-item" data-menu="stats">
+📊 ስታቲስቲክስ
+</button>
+
+<button class="menu-item" data-menu="feedback">
+💬 አስተያየት / ሪፖርት
+</button>
+
+<button class="menu-item" data-menu="contact">
+📩 አግኙን
+</button>
+
+<button class="menu-item" data-menu="about">
+ℹ️ ስለ እኛ
+</button>
+
+<button class="menu-item" data-menu="sources">
+📚 የመረጃ ምንጮች
+</button>
+
+<button class="menu-item" data-menu="admin">
+🛠️ አስተዳደር
+</button>
+
+<button class="menu-item" data-menu="privacy">
+📄 የአጠቃቀም ደንብ / Privacy
+</button>
+
+</div>
+
+<div class="dialog-footer">
+<button class="btn" id="closeMenu">
+ዝጋ
+</button>
+</div>
+
+</div>
+
+</dialog>
+
+<script>
+
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+  'https://geznekrpdubpgsegseer.supabase.co';
+
+const SUPABASE_KEY =
+  'sb_publishable_v6cciBIeO_Gr3q3ZHto2vQ_wQp9vl6e';
+
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   LANGUAGES
+   ========================================================= */
+
+const LANGUAGES = {
+
+  sid:{
+    name:'Sidaamu Afoo',
+    title:'title_sid',
+    summary:'summary_sid',
+    content:'content_sid'
+  },
+
+  am:{
+    name:'አማርኛ',
+    title:'title_am',
+    summary:'summary_am',
+    content:'content_am'
+  },
+
+  en:{
+    name:'English',
+    title:'title_en',
+    summary:'summary_en',
+    content:'content_en'
+  }
+
+};
+
+let currentLanguage='am';
+
+let topics=[];
+let articles=[];
+
+let currentTopicId=null;
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+const $=id=>document.getElementById(id);
+
+function escapeHTML(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+
+}
+
+function getTitle(item){
+
+  if(!item) return '';
+
+  const field=
+    LANGUAGES[currentLanguage].title;
+
+  return (
+    item[field] ||
+    item.title_am ||
+    item.title_sid ||
+    item.title_en ||
+    ''
+  );
+
+}
+
+function getSummary(item){
+
+  if(!item) return '';
+
+  const field=
+    LANGUAGES[currentLanguage].summary;
+
+  return (
+    item[field] ||
+    item.summary_am ||
+    item.summary_sid ||
+    item.summary_en ||
+    ''
+  );
+
+}
+
+function getContent(item){
+
+  if(!item) return '';
+
+  const field=
+    LANGUAGES[currentLanguage].content;
+
+  return (
+    item[field] ||
+    item.content_am ||
+    item.content_sid ||
+    item.content_en ||
+    ''
+  );
+
+}
+
+
+/* =========================================================
+   LANGUAGE UI
+   ========================================================= */
+
+function renderLanguages(){
+
+  const box=$('languages');
+
+  box.innerHTML=
+    Object.entries(LANGUAGES)
+    .map(([code,data])=>`
+
+      <button
+        class="language ${code===currentLanguage?'active':''}"
+        data-language="${code}"
+      >
+        ${escapeHTML(data.name)}
+      </button>
+
+    `)
+    .join('');
+
+  document
+    .querySelectorAll('[data-language]')
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        currentLanguage=
+          button.dataset.language;
+
+        renderLanguages();
+
+        if(currentTopicId){
+          openTopic(currentTopicId);
+        }else{
+          showHome();
+        }
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   TOPIC HELPERS
+   ========================================================= */
+
+function rootTopics(){
+
+  return topics.filter(
+    topic=>topic.parent_id===null ||
+           topic.parent_id===undefined ||
+           topic.parent_id==='' ||
+           topic.parent_id===0
+  );
+
+}
+
+function childTopics(parentId){
+
+  return topics.filter(
+    topic=>
+      String(topic.parent_id ?? '')===
+      String(parentId)
+  );
+
+}
+
+function topicArticles(topicId){
+
+  return articles.filter(article=>
+    String(
+      article.topic_id ??
+      article.category_id ??
+      ''
+    )===
+    String(topicId)
+  );
+
+}
+
+
+/* =========================================================
+   HOME
+   ========================================================= */
+
+function showHome(){
+
+  currentTopicId=null;
+
+  const roots=rootTopics();
+
+  $('view').innerHTML=`
+
+    <div class="section-title">
+
+      <h2>
+        📚 ዋና የይዘት ምድቦች
+      </h2>
+
+      <span class="meta">
+        ${roots.length} ምድቦች
+      </span>
+
+    </div>
+
+    <div class="grid" id="topicGrid"></div>
+
+  `;
+
+  const grid=$('topicGrid');
+
+  if(!roots.length){
+
+    grid.innerHTML=`
+
+      <div class="notice">
+        የታተሙ ዋና ምድቦች አልተገኙም።
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  grid.innerHTML=
+    roots
+      .map(topic=>`
+
+        <button
+          class="card"
+          data-topic="${escapeHTML(topic.id)}"
+        >
+
+          <h3>
+            ${escapeHTML(getTitle(topic))}
+          </h3>
+
+          <p>
+            ${escapeHTML(getSummary(topic))}
+          </p>
+
+        </button>
+
+      `)
+      .join('');
+
+  document
+    .querySelectorAll('#topicGrid [data-topic]')
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        openTopic(
+          button.dataset.topic
+        );
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   TOPIC PAGE
+   ========================================================= */
+
+function openTopic(id){
+
+  currentTopicId=id;
+
+  const topic=
+    topics.find(
+      item=>String(item.id)===String(id)
+    );
+
+  if(!topic){
+
+    showHome();
+
+    return;
+
+  }
+
+  const children=
+    childTopics(id);
+
+  const relatedArticles=
+    topicArticles(id);
+
+  $('view').innerHTML=`
+
+    <button
+      class="btn back"
+      id="backHome"
+    >
+      ← መነሻ
+    </button>
+
+    <div class="panel">
+
+      <h2>
+        ${escapeHTML(getTitle(topic))}
+      </h2>
+
+      <p class="meta">
+        ${escapeHTML(getSummary(topic))}
+      </p>
+
+    </div>
+
+    <div class="section-title">
+
+      <h2>
+        📂 ንዑስ ርዕሶች
+      </h2>
+
+    </div>
+
+    <div
+      class="grid"
+      id="subtopicGrid"
+    ></div>
+
+    <div class="section-title">
+
+      <h2>
+        📖 የይዘት ንባብ
+      </h2>
+
+    </div>
+
+    <div
+      class="grid"
+      id="articleGrid"
+    ></div>
+
+  `;
+
+  $('backHome').onclick=showHome;
+
+  const subtopicGrid=
+    $('subtopicGrid');
+
+  if(children.length){
+
+    subtopicGrid.innerHTML=
+      children.map(child=>`
+
+        <button
+          class="card"
+          data-subtopic="${escapeHTML(child.id)}"
+        >
+
+          <h3>
+            ${escapeHTML(getTitle(child))}
+          </h3>
+
+          <p>
+            ${escapeHTML(getSummary(child))}
+          </p>
+
+        </button>
+
+      `)
+      .join('');
+
+  }else{
+
+    subtopicGrid.innerHTML=`
+
+      <div class="notice">
+        ንዑስ ርዕስ አልተገኘም።
+      </div>
+
+    `;
+
+  }
+
+  document
+    .querySelectorAll('[data-subtopic]')
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        openTopic(
+          button.dataset.subtopic
+        );
+
+      };
+
+    });
+
+
+  const articleGrid=
+    $('articleGrid');
+
+  if(relatedArticles.length){
+
+    articleGrid.innerHTML=
+      relatedArticles
+        .map(article=>`
+
+          <button
+            class="card"
+            data-article="${escapeHTML(article.id)}"
+          >
+
+            <h3>
+              ${escapeHTML(getTitle(article))}
+            </h3>
+
+            <p>
+              ${escapeHTML(getSummary(article))}
+            </p>
+
+          </button>
+
+        `)
+        .join('');
+
+  }else{
+
+    articleGrid.innerHTML=`
+
+      <div class="notice">
+        በዚህ ምድብ ላይ የታተመ ይዘት አልተገኘም።
+      </div>
+
+    `;
+
+  }
+
+  document
+    .querySelectorAll('[data-article]')
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        openArticle(
+          button.dataset.article
+        );
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   ARTICLE PAGE
+   ========================================================= */
+
+function openArticle(id){
+
+  const article=
+    articles.find(
+      item=>String(item.id)===String(id)
+    );
+
+  if(!article) return;
+
+  $('view').innerHTML=`
+
+    <button
+      class="btn back"
+      id="backTopic"
+    >
+      ← ተመለስ
+    </button>
+
+    <article class="article">
+
+      <h1>
+        ${escapeHTML(getTitle(article))}
+      </h1>
+
+      <div class="article-summary">
+        ${escapeHTML(getSummary(article))}
+      </div>
+
+      <hr>
+
+      <div class="article-content">
+        ${escapeHTML(getContent(article))}
+      </div>
+
+      <hr>
+
+      <div style="margin-top:15px">
+
+        <button
+          class="btn"
+          id="copyArticle"
+        >
+          📋 ቅዳ
+        </button>
+
+        <button
+          class="btn"
+          id="shareArticle"
+        >
+          📤 አጋራ
+        </button>
+
+      </div>
+
+    </article>
+
+  `;
+
+  $('backTopic').onclick=()=>{
+
+    if(currentTopicId){
+
+      openTopic(currentTopicId);
+
+    }else{
+
+      showHome();
+
+    }
+
+  };
+
+
+  $('copyArticle').onclick=async()=>{
+
+    const text=
+      getTitle(article)+
+      '\n\n'+
+      getContent(article);
+
+    try{
+
+      await navigator.clipboard.writeText(text);
+
+      $('copyArticle').textContent=
+        '✓ ተቀድቷል';
+
+      setTimeout(()=>{
+
+        $('copyArticle').textContent=
+          '📋 ቅዳ';
+
+      },1500);
+
+    }catch(e){
+
+      alert('መቅዳት አልተቻለም።');
+
+    }
+
+  };
+
+
+  $('shareArticle').onclick=async()=>{
+
+    const text=getTitle(article);
+
+    if(
+      navigator.share
+    ){
+
+      try{
+
+        await navigator.share({
+          title:text,
+          text:text,
+          url:location.href
+        });
+
+      }catch(e){}
+
+    }else{
+
+      try{
+
+        await navigator.clipboard.writeText(
+          location.href
+        );
+
+        alert('የገጹ አድራሻ ተቀድቷል።');
+
+      }catch(e){}
+
+    }
+
+  };
+
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function performSearch(){
+
+  const query=
+    $('searchInput')
+      .value
+      .trim()
+      .toLowerCase();
+
+  if(!query){
+
+    showHome();
+
+    return;
+
+  }
+
+  const results=
+    articles.filter(article=>{
+
+      const fields=[
+
+        article.title_am,
+        article.title_sid,
+        article.title_en,
+
+        article.summary_am,
+        article.summary_sid,
+        article.summary_en,
+
+        article.content_am,
+        article.content_sid,
+        article.content_en
+
+      ];
+
+      return fields.some(value=>
+        String(value ?? '')
+          .toLowerCase()
+          .includes(query)
+      );
+
+    });
+
+
+  $('view').innerHTML=`
+
+    <div class="section-title">
+
+      <h2>
+        🔎 የፍለጋ ውጤት
+      </h2>
+
+      <span class="meta">
+        ${results.length} ውጤት
+      </span>
+
+    </div>
+
+    <div
+      class="grid"
+      id="searchResults"
+    ></div>
+
+  `;
+
+  const box=$('searchResults');
+
+  if(!results.length){
+
+    box.innerHTML=`
+
+      <div class="notice">
+
+        የፈለጉት መረጃ አልተገኘም።
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  box.innerHTML=
+    results
+      .map(article=>`
+
+        <button
+          class="card"
+          data-result="${escapeHTML(article.id)}"
+        >
+
+          <h3>
+            ${escapeHTML(getTitle(article))}
+          </h3>
+
+          <p>
+            ${escapeHTML(getSummary(article))}
+          </p>
+
+        </button>
+
+      `)
+      .join('');
+
+  document
+    .querySelectorAll('[data-result]')
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        openArticle(
+          button.dataset.result
+        );
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   MENU PANELS
+   ========================================================= */
+
+function showPanel(type){
+
+  const dialog=$('menuDialog');
+
+  const panels={
+
+    settings:`
+
+      <h2>⚙️ ቅንብሮች</h2>
+
+      <p>የመልክ ቅንብሮች</p>
+
+      <button
+        class="btn"
+        id="lightMode"
+      >
+        ☀️ Light Mode
+      </button>
+
+      <button
+        class="btn"
+        id="darkMode"
+      >
+        🌙 Dark Mode
+      </button>
+
+      <button
+        class="btn"
+        id="defaultMode"
+      >
+        🔄 ነባሪ ቅንብር
+      </button>
+
+    `,
+
+    stats:`
+
+      <h2>📊 ስታቲስቲክስ</h2>
+
+      <div class="stat-grid">
+
+        <div class="stat">
+          <strong>${rootTopics().length}</strong>
+          ዋና ምድቦች
+        </div>
+
+        <div class="stat">
+          <strong>${topics.length}</strong>
+          Topics
+        </div>
+
+        <div class="stat">
+          <strong>${articles.length}</strong>
+          የታተሙ Articles
+        </div>
+
+      </div>
+
+    `,
+
+    feedback:`
+
+      <h2>💬 አስተያየት / ሪፖርት</h2>
+
+      <p>
+        ስህተት፣ የጎደለ መረጃ ወይም ማሻሻያ
+        ለማሳወቅ በኢሜይል ያግኙን።
+      </p>
+
+      <a
+        class="btn primary"
+        href="mailto:ezrasamuel2ezrasamuel2721@gmail.com"
+      >
+        📩 ኢሜይል ላክ
+      </a>
+
+    `,
+
+    contact:`
+
+      <h2>📩 አግኙን</h2>
+
+      <p>
+        <strong>ኢሜይል:</strong><br>
+        ezrasamuel2ezrasamuel2721@gmail.com
+      </p>
+
+      <p>
+        <strong>ስልክ:</strong><br>
+        0962244464
+      </p>
+
+    `,
+
+    about:`
+
+      <h2>ℹ️ ስለ ሲዳማን እንወቅ</h2>
+
+      <p>
+        <strong>
+        ሲዳማን እንወቅ
+        </strong>
+        የሲዳማን ማንነት፣ ታሪክ፣
+        ባህል፣ ቋንቋ፣ ማኅበራዊ ሕይወት
+        እና ተያያዥ ዕውቀት በዲጂታል
+        መድረክ ለማቅረብ የተዘጋጀ ፕሮጀክት ነው።
+      </p>
+
+      <h3>ዓላማችን</h3>
+
+      <p>
+        ስለ ሲዳማ ሕዝብ የተደራጀና
+        ተደራሽ መረጃ ማቅረብ።
+      </p>
+
+      <h3>ራዕያችን</h3>
+
+      <p>
+        የሲዳማን ታሪክና ማንነት
+        ለአሁኑና ለመጪው ትውልድ
+        በዲጂታል መልኩ ማስቀመጥ።
+      </p>
+
+    `,
+
+    sources:`
+
+      <h2>📚 የመረጃ ምንጮች</h2>
+
+      <p>
+        የእያንዳንዱ ይዘት ምንጭ
+        በይዘት ደረጃ እንዲመዘገብ
+        የሚያስችል መዋቅር ተዘጋጅቷል።
+      </p>
+
+    `,
+
+    admin:`
+
+      <h2>🛠️ አስተዳደር</h2>
+
+      <p>
+        Admin Login፣ ይዘት መጨመር፣
+        ማስተካከል፣ ማጥፋት፣
+        ምድቦች፣ ምስሎች፣ ቦታዎች
+        እና Supabase አስተዳደር
+        የሚያገለግል የአስተዳደር ክፍል ነው።
+      </p>
+
+      <p>
+        ይህ የፊት ገጽ ነው፤
+        የAdmin የደህንነት ሥርዓት
+        በተለየ የአስተዳደር መዋቅር
+        መጠበቅ አለበት።
+      </p>
+
+    `,
+
+    privacy:`
+
+      <h2>📄 የአጠቃቀም ደንብ / Privacy</h2>
+
+      <p>
+        ይህ ክፍል የተጠቃሚ ግላዊነት፣
+        የይዘት አጠቃቀም እና
+        የመድረኩ አጠቃቀም ደንቦችን
+        በዝርዝር ለማቅረብ የተዘጋጀ ነው።
+      </p>
+
+    `
+
+  };
+
+  const content=panels[type];
+
+  if(!content) return;
+
+  dialog.querySelector('.dialog-body').innerHTML=`
+
+    ${content}
+
+    <div class="dialog-footer">
+      <button
+        class="btn"
+        id="closePanel"
+      >
+        ዝጋ
+      </button>
+    </div>
+
+  `;
+
+  $('closePanel').onclick=()=>{
+
+    dialog.close();
+
+  };
+
+
+  if(type==='settings'){
+
+    $('lightMode').onclick=()=>{
+
+      document.body.classList.remove('dark');
+
+      localStorage.setItem(
+        'sidaaman-theme',
+        'light'
+      );
+
+    };
+
+    $('darkMode').onclick=()=>{
+
+      document.body.classList.add('dark');
+
+      localStorage.setItem(
+        'sidaaman-theme',
+        'dark'
+      );
+
+    };
+
+    $('defaultMode').onclick=()=>{
+
+      document.body.classList.remove('dark');
+
+      localStorage.removeItem(
+        'sidaaman-theme'
+      );
+
+    };
+
+  }
+
+}
+
+
+/* =========================================================
+   MENU EVENTS
+   ========================================================= */
+
+$('menuBtn').onclick=()=>{
+
+  $('menuDialog')
+    .showModal();
+
+};
+
+$('closeMenu').onclick=()=>{
+
+  $('menuDialog')
+    .close();
+
+};
+
+document
+  .querySelectorAll('[data-menu]')
+  .forEach(button=>{
+
+    button.onclick=()=>{
+
+      const type=
+        button.dataset.menu;
+
+      if(type==='search'){
+
+        $('menuDialog').close();
+
+        $('searchInput').focus();
+
+        return;
+
+      }
+
+      showPanel(type);
+
+    };
+
+  });
+
+
+/* =========================================================
+   HOME / SEARCH EVENTS
+   ========================================================= */
+
+$('homeBtn').onclick=showHome;
+
+$('searchBtn').onclick=
+  performSearch;
+
+$('searchInput')
+  .addEventListener(
+    'keydown',
+    event=>{
+
+      if(event.key==='Enter'){
+
+        performSearch();
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   LOAD SUPABASE DATA
+   ========================================================= */
+
+async function loadData(){
+
+  try{
+
+    const [
+      topicsResult,
+      articlesResult
+    ]=await Promise.all([
+
+      db
+        .from('sidama_topics')
+        .select('*')
+        .eq('is_active',true)
+        .order('sort_order'),
+
+      db
+        .from('sidama_articles')
+        .select('*')
+        .eq('editorial_status','published')
+        .order('sort_order')
+        .limit(1000)
+
+    ]);
+
+
+    if(topicsResult.error){
+
+      throw new Error(
+        topicsResult.error.message
+      );
+
+    }
+
+
+    if(articlesResult.error){
+
+      throw new Error(
+        articlesResult.error.message
+      );
+
+    }
+
+
+    topics=
+      topicsResult.data || [];
+
+    articles=
+      articlesResult.data || [];
+
+
+    renderLanguages();
+
+    showHome();
+
+  }catch(error){
+
+    console.error(
+      'SIDAAMAN ENWEQ ERROR:',
+      error
+    );
+
+    $('view').innerHTML=`
+
+      <div class="notice">
+
+        <strong>
+          መረጃውን መጫን አልተቻለም።
+        </strong>
+
+        <br><br>
+
+        Supabase ግንኙነት ወይም
+        የመረጃ ጠያቂው ላይ ችግር ተፈጥሯል።
+
+        <br><br>
+
+        <button
+          class="btn primary"
+          onclick="location.reload()"
+        >
+          🔄 እንደገና ሞክር
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   RESTORE THEME
+   ========================================================= */
+
+if(
+  localStorage.getItem(
+    'sidaaman-theme'
+  )==='dark'
+){
+
+  document.body.classList.add('dark');
+
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+renderLanguages();
+
+loadData();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "ሲዳማን እንወቅ",
+  "short_name": "ሲዳማን እንወቅ",
+  "description": "የሲዳማ ታሪክ፣ ባህል፣ ቋንቋ እና ማንነት የሚያስረዳ የኦፍላይን መተግበሪያ",
+  "lang": "am",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f8f5",
+  "theme_color": "#006b3c",
+  "icons": []
+}

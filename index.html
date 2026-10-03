@@ -1971,34 +1971,93 @@ function speakText(text){
 
   if(!text) return;
 
-  if(
-    !('speechSynthesis' in window)
-  ){
-
-    alert(
-      'የድምፅ ማንበቢያ በዚህ መሣሪያ አይደገፍም።'
-    );
-
+  if(!("speechSynthesis" in window)){
+    alert("የድምፅ ንባብ በዚህ መሣሪያ አይደገፍም።");
     return;
-
   }
 
-  speechStop();
+  speechSynthesis.cancel();
 
   const utterance =
     new SpeechSynthesisUtterance(
       String(text).slice(0,12000)
     );
 
-  utterance.lang =
-    speechLanguage();
+  const lang = currentLanguage || "am";
 
-  utterance.rate=0.9;
-  utterance.pitch=1;
+  const languageMap = {
+    am: ["am-ET", "am"],
+    sid: ["sid-ET", "sid"],
+    en: ["en-US", "en-GB", "en"]
+  };
 
-  speechSynthesis.speak(
-    utterance
-  );
+  const wanted =
+    languageMap[lang] || languageMap.am;
+
+  const voices =
+    speechSynthesis.getVoices();
+
+  let voice = null;
+
+  /* ትክክለኛውን ቋንቋ ፈልግ */
+  for(const code of wanted){
+
+    voice = voices.find(v =>
+      v.lang &&
+      v.lang.toLowerCase() ===
+      code.toLowerCase()
+    );
+
+    if(voice) break;
+  }
+
+  /* language prefix ፈልግ */
+  if(!voice){
+
+    for(const code of wanted){
+
+      const prefix =
+        code.split("-")[0].toLowerCase();
+
+      voice = voices.find(v =>
+        v.lang &&
+        v.lang.toLowerCase()
+        .startsWith(prefix)
+      );
+
+      if(voice) break;
+    }
+  }
+
+  /*
+   * ተመሳሳይ ቋንቋ voice ካልተገኘ
+   * English ላይ በግድ አትመልስ።
+   */
+  if(!voice){
+
+    const names = {
+      am: "አማርኛ",
+      sid: "Sidaamu Afoo",
+      en: "English"
+    };
+
+    alert(
+      (names[lang] || lang) +
+      " የድምፅ ንባብ voice በስልኩ ላይ አልተገኘም።"
+    );
+
+    return;
+  }
+
+  utterance.voice = voice;
+  utterance.lang = voice.lang;
+
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  speechSynthesis.speak(utterance);
+}
 
 }
 

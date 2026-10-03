@@ -6,6 +6,829 @@
 <meta name="theme-color" content="#006b3c">
 
 <title>ሲዳማን እንወቅ</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+:root{
+  --green:#006b3c;
+  --green2:#00864b;
+  --light-green:#e8f4ee;
+  --text:#17352a;
+  --muted:#64756d;
+  --border:#dce8e1;
+  --bg:#f4f8f5;
+  --white:#fff;
+  --shadow:0 8px 25px rgba(0,0,0,.07);
+}
+
+body{
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  min-height:100vh;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.header{
+  background:var(--green);
+  color:white;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 3px 15px rgba(0,0,0,.12);
+}
+
+.header-inner{
+  width:min(1150px,94%);
+  margin:auto;
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.logo{
+  border:0;
+  background:none;
+  color:white;
+  font-weight:800;
+  font-size:22px;
+}
+
+.logo small{
+  display:block;
+  font-size:11px;
+  opacity:.85;
+  font-weight:400;
+}
+
+.menu-btn{
+  border:0;
+  background:rgba(255,255,255,.12);
+  color:white;
+  padding:9px 13px;
+  border-radius:9px;
+  font-size:20px;
+}
+
+main{
+  width:min(1150px,94%);
+  margin:auto;
+  padding:25px 0 50px;
+}
+
+.hero{
+  background:
+    linear-gradient(
+      135deg,
+      #006b3c,
+      #008d50
+    );
+  color:white;
+  border-radius:22px;
+  padding:42px 25px;
+  margin-bottom:25px;
+  box-shadow:var(--shadow);
+}
+
+.hero h1{
+  font-size:clamp(27px,5vw,45px);
+  margin-bottom:10px;
+}
+
+.hero p{
+  opacity:.95;
+  max-width:700px;
+}
+
+.search-box{
+  display:flex;
+  gap:8px;
+  margin-top:25px;
+}
+
+.search-box input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  border-radius:11px;
+  padding:13px 15px;
+  color:var(--text);
+  background:white;
+}
+
+.search-box button{
+  border:0;
+  background:white;
+  color:var(--green);
+  padding:0 17px;
+  border-radius:11px;
+  font-weight:700;
+}
+
+.section-title{
+  margin:25px 0 15px;
+  color:var(--green);
+}
+
+.category-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+}
+
+.category{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,.04);
+  transition:.2s;
+  text-align:left;
+}
+
+.category:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+}
+
+.category .number{
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--light-green);
+  color:var(--green);
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.category h3{
+  color:var(--green);
+  margin-bottom:7px;
+}
+
+.category p{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.read-btn,
+.article-actions button{
+  border:0;
+  background:var(--green);
+  color:white;
+  padding:9px 14px;
+  border-radius:9px;
+  margin-top:10px;
+}
+
+.article-actions button{
+  margin-top:0;
+}
+
+.back{
+  border:0;
+  background:var(--green);
+  color:white;
+  padding:9px 14px;
+  border-radius:9px;
+  margin-bottom:18px;
+}
+
+.view{
+  display:none;
+}
+
+.view.active{
+  display:block;
+}
+
+.panel{
+  background:white;
+  padding:25px;
+  border-radius:17px;
+  box-shadow:var(--shadow);
+  margin-bottom:20px;
+}
+
+.panel h2{
+  color:var(--green);
+  margin-bottom:12px;
+}
+
+.topic-head{
+  background:white;
+  padding:22px;
+  border-radius:17px;
+  box-shadow:var(--shadow);
+  margin-bottom:18px;
+}
+
+.topic-head h2{
+  color:var(--green);
+}
+
+.topic-head p{
+  color:var(--muted);
+  margin-top:7px;
+}
+
+.article-grid{
+  display:grid;
+  gap:15px;
+}
+
+.article-card{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 4px 14px rgba(0,0,0,.04);
+}
+
+.article-card h3{
+  color:var(--green);
+  margin-bottom:8px;
+}
+
+.article-card p{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.article-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:15px 0;
+}
+
+.article{
+  background:white;
+  border-radius:18px;
+  padding:25px;
+  box-shadow:var(--shadow);
+}
+
+.article h1{
+  color:var(--green);
+  margin-bottom:15px;
+}
+
+.article-content{
+  white-space:pre-wrap;
+  font-size:17px;
+  line-height:1.9;
+}
+
+.search-results{
+  display:grid;
+  gap:12px;
+}
+
+.result{
+  background:white;
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:18px;
+}
+
+.result h3{
+  color:var(--green);
+}
+
+.result small{
+  color:var(--muted);
+}
+
+.loading,
+.error{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.error{
+  color:#a33;
+}
+
+.drawer{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  z-index:200;
+  display:none;
+}
+
+.drawer.open{
+  display:block;
+}
+
+.drawer-panel{
+  width:min(350px,88vw);
+  height:100%;
+  background:white;
+  padding:20px;
+  overflow:auto;
+}
+
+.drawer-panel h2{
+  color:var(--green);
+  margin-bottom:20px;
+}
+
+.drawer-item{
+  width:100%;
+  text-align:left;
+  border:0;
+  background:#f5f8f6;
+  padding:13px;
+  margin-bottom:8px;
+  border-radius:9px;
+  color:var(--text);
+}
+
+.drawer-item:hover{
+  background:#e5f1eb;
+}
+
+.setting-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.setting-row:last-child{
+  border-bottom:0;
+}
+
+.setting-row button,
+.setting-row select{
+  border:1px solid var(--border);
+  background:white;
+  padding:8px 12px;
+  border-radius:8px;
+}
+
+.footer{
+  margin-top:30px;
+  padding:25px 10px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.sub-title{
+  color:var(--green);
+  margin:18px 0 10px;
+}
+
+.dark{
+  --bg:#101714;
+  --white:#18221e;
+  --text:#e8f2ec;
+  --muted:#aabbb2;
+  --border:#2b3b34;
+  --light-green:#203d30;
+}
+
+.dark .panel,
+.dark .article,
+.dark .article-card,
+.dark .category,
+.dark .result,
+.dark .topic-head,
+.dark .loading,
+.dark .error,
+.dark .drawer-panel{
+  background:#18221e;
+}
+
+.dark .search-box input,
+.dark .setting-row select,
+.dark .setting-row button{
+  background:#18221e;
+  color:white;
+}
+
+.dark .drawer-item{
+  background:#203029;
+  color:white;
+}
+
+@media(max-width:600px){
+
+  .header-inner{
+    min-height:62px;
+  }
+
+  .logo{
+    font-size:18px;
+  }
+
+  main{
+    width:92%;
+    padding-top:18px;
+  }
+
+  .hero{
+    padding:30px 18px;
+  }
+
+  .search-box{
+    flex-direction:column;
+  }
+
+  .search-box button{
+    padding:11px;
+  }
+
+  .category-grid{
+    grid-template-columns:1fr;
+  }
+
+  .article{
+    padding:18px;
+  }
+
+  .article-content{
+    font-size:16px;
+  }
+
+  .setting-row{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-inner">
+
+    <button class="logo" onclick="home()">
+      ሲዳማን እንወቅ
+      <small>
+        ታሪክ • ባህል • ቋንቋ • ማንነት
+      </small>
+    </button>
+
+    <button
+      class="menu-btn"
+      onclick="openMenu()"
+      aria-label="Menu">
+      ☰
+    </button>
+
+  </div>
+</header>
+
+
+<div
+  id="drawer"
+  class="drawer"
+  onclick="closeMenu(event)"
+>
+
+  <div
+    class="drawer-panel"
+    onclick="event.stopPropagation()"
+  >
+
+    <h2>ሲዳማን እንወቅ</h2>
+
+    <button class="drawer-item" onclick="home()">
+      🏠 መነሻ
+    </button>
+
+    <button
+      class="drawer-item"
+      onclick="showView('settingsView')"
+    >
+      ⚙️ ቅንብሮች
+    </button>
+
+    <button
+      class="drawer-item"
+      onclick="showView('aboutView')"
+    >
+      ℹ️ ስለ ሲዳማን እንወቅ
+    </button>
+
+    <button
+      class="drawer-item"
+      onclick="showView('sourcesView')"
+    >
+      📚 ምንጮች
+    </button>
+
+  </div>
+</div>
+
+
+<main>
+
+<!-- HOME -->
+
+<section id="homeView" class="view active">
+
+  <div class="hero">
+
+    <h1>
+      ሲዳማን እንወቅ
+    </h1>
+
+    <p>
+      የሲዳማን ማንነት የሚያስረዳ
+      ዲጂታል መድረክ
+    </p>
+
+    <div class="search-box">
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="የሚፈልጉትን ይፈልጉ..."
+        onkeydown="
+          if(event.key==='Enter') searchContent()
+        "
+      >
+
+      <button onclick="searchContent()">
+        🔎 ፈልግ
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <h2 class="section-title">
+    ዋና ዋና የይዘት ክፍሎች
+  </h2>
+
+  <div
+    id="categoryGrid"
+    class="category-grid"
+  >
+    <div class="loading">
+      መረጃውን በመጫን ላይ…
+    </div>
+  </div>
+
+</section>
+
+
+<!-- TOPIC -->
+
+<section id="topicView" class="view">
+
+  <button
+    class="back"
+    onclick="home()"
+  >
+    ← ወደ መነሻ
+  </button>
+
+  <div
+    id="topicHead"
+    class="topic-head"
+  ></div>
+
+  <div
+    id="articleGrid"
+    class="article-grid"
+  ></div>
+
+</section>
+
+
+<!-- ARTICLE -->
+
+<section id="articleView" class="view">
+
+  <button
+    class="back"
+    onclick="backToTopic()"
+  >
+    ← ተመለስ
+  </button>
+
+  <div
+    id="articleBox"
+    class="article"
+  ></div>
+
+</section>
+
+
+<!-- SEARCH -->
+
+<section id="searchView" class="view">
+
+  <button
+    class="back"
+    onclick="home()"
+  >
+    ← ወደ መነሻ
+  </button>
+
+  <div class="panel">
+
+    <h2>
+      🔎 የፍለጋ ውጤት
+    </h2>
+
+    <div
+      id="searchResults"
+      class="search-results"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- SETTINGS -->
+
+<section id="settingsView" class="view">
+
+  <button
+    class="back"
+    onclick="home()"
+  >
+    ← ወደ መነሻ
+  </button>
+
+  <div class="panel">
+
+    <h2>⚙️ ቅንብሮች</h2>
+
+    <div class="setting-row">
+
+      <span>ቋንቋ</span>
+
+      <select
+        id="languageSelect"
+        onchange="setLanguage(this.value)"
+      >
+        <option value="am">
+          አማርኛ
+        </option>
+
+        <option value="sid">
+          Sidaamu Afoo
+        </option>
+
+        <option value="en">
+          English
+        </option>
+      </select>
+
+    </div>
+
+
+    <div class="setting-row">
+
+      <span>
+        ጨለማ / ብርሃን
+      </span>
+
+      <button onclick="toggleDark()">
+        🌙 / ☀️
+      </button>
+
+    </div>
+
+
+    <div class="setting-row">
+
+      <span>
+        የጽሑፍ መጠን
+      </span>
+
+      <div>
+
+        <button onclick="fontSize(-1)">
+          A−
+        </button>
+
+        <button onclick="fontSize(1)">
+          A+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section id="aboutView" class="view">
+
+  <button
+    class="back"
+    onclick="home()"
+  >
+    ← ወደ መነሻ
+  </button>
+
+  <div class="panel">
+
+    <h2>
+      ስለ ሲዳማን እንወቅ
+    </h2>
+
+    <p>
+      ሲዳማን እንወቅ ስለ ሲዳማ ሕዝብ
+      ታሪክ፣ ባህል፣ ቋንቋ፣ ማንነት፣
+      ጀግኖች፣ መልክዓ ምድር፣ ቱሪዝም፣
+      ቅዱሳት ሥፍራዎች እና ሌሎች
+      የሕዝቡን ሕይወት የሚመለከቱ
+      ጉዳዮችን በዲጂታል መልክ
+      ለማቅረብ የተዘጋጀ መድረክ ነው።
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- SOURCES -->
+
+<section id="sourcesView" class="view">
+
+  <button
+    class="back"
+    onclick="home()"
+  >
+    ← ወደ መነሻ
+  </button>
+
+  <div class="panel">
+
+    <h2>
+      📚 ምንጮች
+    </h2>
+
+    <p>
+      የሲዳማን እንወቅ ይዘቶች
+      ከተመዘገቡ የመረጃ ምንጮችና
+      የጥናት ማጣቀሻዎች ጋር
+      በSupabase የመረጃ መዋቅር
+      ውስጥ ይቀመጣሉ።
+    </p>
+
+  </div>
+
+</section>
+
+</main>
+
+
+<footer class="footer">
+  © ሲዳማን እንወቅ
+</footer>
+
+
 <script>
 
 /* =========================================================
@@ -18,10 +841,11 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   'sb_publishable_v6cciBIeO_Gr3q3ZHto2vQp9vl6e';
 
-const db = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
 /* =========================================================
@@ -29,6 +853,7 @@ const db = supabase.createClient(
 ========================================================= */
 
 const LANGS = {
+
   am:{
     name:'አማርኛ',
     title:'title_am',
@@ -49,10 +874,13 @@ const LANGS = {
     summary:'summary_en',
     content:'content_en'
   }
+
 };
 
 let currentLang =
-  localStorage.getItem('sidaaman_lang') || 'am';
+  localStorage.getItem(
+    'sidaaman_lang'
+  ) || 'am';
 
 
 /* =========================================================
@@ -67,7 +895,7 @@ let currentArticle = null;
 
 
 /* =========================================================
-   AGREED CATEGORIES
+   16 CATEGORIES
 ========================================================= */
 
 const CATEGORIES = [
@@ -87,7 +915,10 @@ const CATEGORIES = [
   am:'የሲዳማ ባህል',
   sid:'Sidamu Aadaa',
   en:'Sidama Culture',
-  aliases:['የሲዳማ ባሕል','የሲዳማ ባህል']
+  aliases:[
+    'የሲዳማ ባሕል',
+    'የሲዳማ ባህል'
+  ]
  },
 
  {
@@ -227,8 +1058,11 @@ const CATEGORIES = [
   am:'የሲዳማ ከተሞችና መንደሮች',
   sid:'Sidamu Katamoota nna Gande',
   en:'Cities and Villages of Sidama',
-  aliases:['የሲዳማ ከተሞችና መንደሮች']
+  aliases:[
+    'የሲዳማ ከተሞችና መንደሮች'
+  ]
  }
+
 ];
 
 
@@ -237,107 +1071,115 @@ const CATEGORIES = [
 ========================================================= */
 
 function esc(value){
+
   return String(value ?? '')
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;')
     .replace(/'/g,'&#039;');
+
 }
 
 
 function currentField(obj,type){
-  const lang = LANGS[currentLang];
+
+  const lang =
+    LANGS[currentLang];
+
   if(!lang) return '';
+
   return obj?.[lang[type]] || '';
+
 }
 
 
 function getTopicTitle(topic){
+
   return currentField(topic,'title')
     || topic.title_am
     || topic.title_sid
     || topic.title_en
+    || topic.name
+    || topic.slug
     || '';
+
 }
 
 
 function getTopicSummary(topic){
+
   return currentField(topic,'summary')
     || topic.summary_am
     || topic.summary_sid
     || topic.summary_en
     || '';
+
 }
 
 
 function getArticleTitle(article){
+
   return currentField(article,'title')
     || article.title_am
     || article.title_sid
     || article.title_en
     || '';
+
 }
 
 
 function getArticleSummary(article){
+
   return currentField(article,'summary')
     || article.summary_am
     || article.summary_sid
     || article.summary_en
     || '';
+
 }
 
 
 function getArticleContent(article){
+
   return currentField(article,'content')
     || article.content_am
     || article.content_sid
     || article.content_en
     || '';
+
 }
 
 
-function childrenOf(topicId){
+/* =========================================================
+   TOPIC TREE
+========================================================= */
+
+function childrenOf(parentId){
+
   return topics
-    .filter(t =>
-      String(t.parent_id || '') === String(topicId)
+    .filter(topic =>
+      String(
+        topic.parent_id ?? ''
+      ) === String(parentId)
     )
-    .sort((a,b)=>
-      (a.sort_order || 0) -
-      (b.sort_order || 0)
+    .sort(
+      (a,b)=>
+        (a.sort_order || 0) -
+        (b.sort_order || 0)
     );
+
 }
 
 
 function articlesOf(topicId){
-  return articles.filter(a =>
-    String(a.topic_id || '') === String(topicId)
+
+  return articles.filter(article =>
+    String(
+      article.topic_id ?? ''
+    ) === String(topicId)
   );
-}
 
-
-function findTopic(aliases){
-
-  if(!aliases?.length) return null;
-
-  return topics.find(topic=>{
-
-    const values = [
-      topic.title_am,
-      topic.title_sid,
-      topic.title_en,
-      topic.name,
-      topic.slug
-    ]
-    .filter(Boolean)
-    .map(x=>String(x).trim());
-
-    return aliases.some(alias =>
-      values.includes(alias)
-    );
-
-  }) || null;
 }
 
 
@@ -349,8 +1191,8 @@ function showView(id){
 
   document
     .querySelectorAll('.view')
-    .forEach(v =>
-      v.classList.remove('active')
+    .forEach(view =>
+      view.classList.remove('active')
     );
 
   const el =
@@ -366,20 +1208,19 @@ function showView(id){
   });
 
   closeMenu();
+
 }
 
 
 function home(){
 
-  showView('homeView');
-
-  const input =
-    document.getElementById('searchInput');
-
-  if(input) input.value='';
+  speechStop();
 
   currentTopic=null;
   currentArticle=null;
+
+  showView('homeView');
+
 }
 
 
@@ -401,11 +1242,46 @@ function closeMenu(event){
   const drawer =
     document.getElementById('drawer');
 
-  if(!event || event.target===drawer){
+  if(
+    !event ||
+    event.target === drawer
+  ){
 
     drawer.classList.remove('open');
 
   }
+
+}
+
+
+/* =========================================================
+   FIND MAIN TOPIC
+========================================================= */
+
+function findTopic(aliases){
+
+  return topics.find(topic => {
+
+    const values = [
+
+      topic.title_am,
+      topic.title_sid,
+      topic.title_en,
+      topic.name,
+      topic.slug
+
+    ]
+    .filter(Boolean)
+    .map(
+      value =>
+        String(value).trim()
+    );
+
+    return aliases.some(alias =>
+      values.includes(alias)
+    );
+
+  }) || null;
 
 }
 
@@ -417,79 +1293,87 @@ function closeMenu(event){
 function renderCategories(){
 
   const grid =
-    document.getElementById('categoryGrid');
+    document.getElementById(
+      'categoryGrid'
+    );
+
+  if(!grid) return;
 
   grid.innerHTML =
-    CATEGORIES.map((cat,index)=>{
+    CATEGORIES.map(
+      (category,index)=>{
 
-      const found =
-        findTopic(cat.aliases);
+        const topic =
+          findTopic(
+            category.aliases
+          );
 
-      let subCount=0;
-      let articleCount=0;
+        const articleCount =
+          topic
+          ? articlesOf(topic.id).length
+          : 0;
 
-      if(found){
+        const childCount =
+          topic
+          ? childrenOf(topic.id).length
+          : 0;
 
-        subCount =
-          childrenOf(found.id).length;
+        return `
 
-        articleCount =
-          articlesOf(found.id).length;
+          <div class="category">
 
-      }
-
-      const total =
-        subCount + articleCount;
-
-      return `
-        <div class="category">
-
-          <button
-            style="
-              all:unset;
-              display:block;
-              width:100%;
-              cursor:pointer;
-            "
-            onclick="openCategory('${cat.id}')"
-          >
-
-            <div class="number">
+            <div
+              class="number"
+            >
               ${index+1}
             </div>
 
             <h3>
-              ${cat.icon}
-              ${esc(cat[currentLang] || cat.am)}
+              ${category.icon}
+              ${esc(
+                category[currentLang]
+                || category.am
+              )}
             </h3>
 
             <p>
               ${
-                found
-                ? `${total} ይዘት / ንዑስ ርዕስ`
+                topic
+                ? `${childCount} ንዑስ ርዕስ • ${articleCount} ጽሑፍ`
                 : 'ይዘቱ በመዘጋጀት ላይ ነው'
               }
             </p>
 
-          </button>
+            ${
+              topic
+              ? `
+                <button
+                  class="read-btn"
+                  onclick="
+                    openCategory('${category.id}')
+                  "
+                >
+                  📖 ክፈት
+                </button>
 
-          ${
-            found
-            ? `
-              <button
-                class="read-btn"
-                onclick="speakTopic('${found.id}',event)"
-              >
-                🔊 አዳምጥ
-              </button>
-            `
-            : ''
-          }
+                <button
+                  class="read-btn"
+                  onclick="
+                    speakTopic('${topic.id}')
+                  "
+                >
+                  🔊 አዳምጥ
+                </button>
+              `
+              : ''
+            }
 
-        </div>
-      `;
+          </div>
 
-    }).join('');
+        `;
+
+      }
+    ).join('');
 
 }
 
@@ -500,32 +1384,41 @@ function renderCategories(){
 
 function openCategory(id){
 
-  const cat =
-    CATEGORIES.find(x=>x.id===id);
+  const category =
+    CATEGORIES.find(
+      item => item.id === id
+    );
 
-  if(!cat) return;
+  if(!category) return;
 
   const topic =
-    findTopic(cat.aliases);
+    findTopic(
+      category.aliases
+    );
 
   if(!topic){
 
-    document.getElementById('topicHead').innerHTML=`
+    document.getElementById(
+      'topicHead'
+    ).innerHTML = `
 
       <h2>
-        ${cat.icon}
-        ${esc(cat[currentLang] || cat.am)}
+        ${category.icon}
+        ${esc(
+          category[currentLang]
+          || category.am
+        )}
       </h2>
 
-      <p style="margin-top:10px;color:var(--muted)">
+      <p>
         ይህ ክፍል በመዘጋጀት ላይ ነው።
       </p>
 
     `;
 
-    document.getElementById('articleGrid').innerHTML='';
-
-    currentTopic=null;
+    document.getElementById(
+      'articleGrid'
+    ).innerHTML='';
 
     showView('topicView');
 
@@ -551,61 +1444,48 @@ function openTopic(topic){
   const directArticles =
     articlesOf(topic.id);
 
-  const title =
-    getTopicTitle(topic);
+  document.getElementById(
+    'topicHead'
+  ).innerHTML = `
 
-  const summary =
-    getTopicSummary(topic);
+    <h2>
+      ${esc(
+        getTopicTitle(topic)
+      )}
+    </h2>
 
-  document.getElementById('topicHead').innerHTML=`
+    ${
+      getTopicSummary(topic)
+      ? `
+        <p>
+          ${esc(
+            getTopicSummary(topic)
+          )}
+        </p>
+      `
+      : ''
+    }
 
-    <div
-      style="
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        gap:12px;
-        flex-wrap:wrap;
-      "
-    >
-
-      <div>
-
-        <h2>
-          ${esc(title)}
-        </h2>
-
-        ${
-          summary
-          ? `
-            <p
-              style="
-                margin-top:8px;
-                color:var(--muted);
-              "
-            >
-              ${esc(summary)}
-            </p>
-          `
-          : ''
-        }
-
-      </div>
+    <div class="article-actions">
 
       <button
-        class="read-btn"
-        onclick="speakTopic('${topic.id}',event)"
+        onclick="
+          speakTopic('${topic.id}')
+        "
       >
         🔊 ርዕሱን አዳምጥ
+      </button>
+
+      <button
+        onclick="speechStop()"
+      >
+        ⏹ አቁም
       </button>
 
     </div>
 
   `;
 
-
-  const grid =
-    document.getElementById('articleGrid');
 
   let html='';
 
@@ -614,53 +1494,52 @@ function openTopic(topic){
 
   if(children.length){
 
-    html += children.map(child=>{
+    html += `
 
-      const childArticles =
-        articlesOf(child.id);
+      <h3 class="sub-title">
+        📂 ንዑስ ርዕሶች
+      </h3>
 
-      return `
+    `;
+
+    html += children.map(
+      child => `
 
         <article class="article-card">
 
           <h3>
-            📌 ${esc(getTopicTitle(child))}
+            📌
+            ${esc(
+              getTopicTitle(child)
+            )}
           </h3>
 
           ${
             getTopicSummary(child)
             ? `
               <p>
-                ${esc(getTopicSummary(child))}
+                ${esc(
+                  getTopicSummary(child)
+                )}
               </p>
             `
             : ''
           }
 
-          <p
-            style="
-              margin-top:8px;
-              font-size:13px;
-              color:var(--muted);
-            "
-          >
-            ${childArticles.length}
-            ጽሑፍ
-          </p>
-
-          <div
-            class="article-actions"
-            style="margin-top:12px"
-          >
+          <div class="article-actions">
 
             <button
-              onclick="openSubtopic('${child.id}')"
+              onclick="
+                openSubtopic('${child.id}')
+              "
             >
-              📖 ይዘቱን ክፈት
+              📖 ክፈት
             </button>
 
             <button
-              onclick="speakTopic('${child.id}',event)"
+              onclick="
+                speakTopic('${child.id}')
+              "
             >
               🔊 አዳምጥ
             </button>
@@ -669,9 +1548,8 @@ function openTopic(topic){
 
         </article>
 
-      `;
-
-    }).join('');
+      `
+    ).join('');
 
   }
 
@@ -680,53 +1558,69 @@ function openTopic(topic){
 
   if(directArticles.length){
 
-    html += directArticles.map(article=>`
+    html += `
 
-      <article class="article-card">
+      <h3 class="sub-title">
+        📚 ጽሑፎች
+      </h3>
 
-        <h3>
-          ${esc(getArticleTitle(article))}
-        </h3>
+    `;
 
-        <p>
-          ${esc(getArticleSummary(article))}
-        </p>
+    html += directArticles.map(
+      article => `
 
-        <div
-          class="article-actions"
-          style="margin-top:12px"
-        >
+        <article class="article-card">
 
-          <button
-            onclick="openArticle('${article.id}')"
-          >
-            📖 አንብብ
-          </button>
+          <h3>
+            ${esc(
+              getArticleTitle(article)
+            )}
+          </h3>
 
-          <button
-            onclick="speakArticleData('${article.id}',event)"
-          >
-            🔊 አዳምጥ
-          </button>
+          <p>
+            ${esc(
+              getArticleSummary(article)
+            )}
+          </p>
 
-        </div>
+          <div class="article-actions">
 
-      </article>
+            <button
+              onclick="
+                openArticle('${article.id}')
+              "
+            >
+              📖 አንብብ
+            </button>
 
-    `).join('');
+            <button
+              onclick="
+                speakArticleData('${article.id}')
+              "
+            >
+              🔊 አዳምጥ
+            </button>
+
+          </div>
+
+        </article>
+
+      `
+    ).join('');
 
   }
 
 
-  if(!html){
+  if(
+    !children.length &&
+    !directArticles.length
+  ){
 
-    html=`
+    html = `
 
       <div class="loading">
-
         በዚህ ክፍል ውስጥ
         የታተመ ይዘት አልተገኘም።
-
       </div>
 
     `;
@@ -734,7 +1628,9 @@ function openTopic(topic){
   }
 
 
-  grid.innerHTML=html;
+  document.getElementById(
+    'articleGrid'
+  ).innerHTML=html;
 
   showView('topicView');
 
@@ -748,8 +1644,10 @@ function openTopic(topic){
 function openSubtopic(id){
 
   const topic =
-    topics.find(t =>
-      String(t.id)===String(id)
+    topics.find(
+      item =>
+        String(item.id) ===
+        String(id)
     );
 
   if(!topic) return;
@@ -759,52 +1657,42 @@ function openSubtopic(id){
   const list =
     articlesOf(topic.id);
 
-  const title =
-    getTopicTitle(topic);
+  document.getElementById(
+    'topicHead'
+  ).innerHTML = `
 
-  const summary =
-    getTopicSummary(topic);
+    <h2>
+      ${esc(
+        getTopicTitle(topic)
+      )}
+    </h2>
 
-  document.getElementById('topicHead').innerHTML=`
+    ${
+      getTopicSummary(topic)
+      ? `
+        <p>
+          ${esc(
+            getTopicSummary(topic)
+          )}
+        </p>
+      `
+      : ''
+    }
 
-    <div
-      style="
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        gap:12px;
-        flex-wrap:wrap;
-      "
-    >
-
-      <div>
-
-        <h2>
-          ${esc(title)}
-        </h2>
-
-        ${
-          summary
-          ? `
-            <p
-              style="
-                margin-top:8px;
-                color:var(--muted);
-              "
-            >
-              ${esc(summary)}
-            </p>
-          `
-          : ''
-        }
-
-      </div>
+    <div class="article-actions">
 
       <button
-        class="read-btn"
-        onclick="speakTopic('${topic.id}',event)"
+        onclick="
+          speakTopic('${topic.id}')
+        "
       >
-        🔊 ንዑስ ርዕሱን አዳምጥ
+        🔊 አዳምጥ
+      </button>
+
+      <button
+        onclick="speechStop()"
+      >
+        ⏹ አቁም
       </button>
 
     </div>
@@ -812,56 +1700,68 @@ function openSubtopic(id){
   `;
 
 
-  document.getElementById('articleGrid').innerHTML =
+  if(!list.length){
 
-    list.length
-
-    ? list.map(article=>`
-
-        <article class="article-card">
-
-          <h3>
-            ${esc(getArticleTitle(article))}
-          </h3>
-
-          <p>
-            ${esc(getArticleSummary(article))}
-          </p>
-
-          <div
-            class="article-actions"
-            style="margin-top:12px"
-          >
-
-            <button
-              onclick="openArticle('${article.id}')"
-            >
-              📖 አንብብ
-            </button>
-
-            <button
-              onclick="speakArticleData('${article.id}',event)"
-            >
-              🔊 አዳምጥ
-            </button>
-
-          </div>
-
-        </article>
-
-      `).join('')
-
-    : `
+    document.getElementById(
+      'articleGrid'
+    ).innerHTML = `
 
       <div class="loading">
-
         በዚህ ንዑስ ርዕስ ስር
         የታተመ ጽሑፍ የለም።
-
       </div>
 
     `;
 
+  }else{
+
+    document.getElementById(
+      'articleGrid'
+    ).innerHTML =
+
+      list.map(
+        article => `
+
+          <article class="article-card">
+
+            <h3>
+              ${esc(
+                getArticleTitle(article)
+              )}
+            </h3>
+
+            <p>
+              ${esc(
+                getArticleSummary(article)
+              )}
+            </p>
+
+            <div class="article-actions">
+
+              <button
+                onclick="
+                  openArticle('${article.id}')
+                "
+              >
+                📖 አንብብ
+              </button>
+
+              <button
+                onclick="
+                  speakArticleData('${article.id}')
+                "
+              >
+                🔊 አዳምጥ
+              </button>
+
+            </div>
+
+          </article>
+
+        `
+      ).join('');
+
+  }
 
   showView('topicView');
 
@@ -875,41 +1775,37 @@ function openSubtopic(id){
 function openArticle(id){
 
   const article =
-    articles.find(a =>
-      String(a.id)===String(id)
+    articles.find(
+      item =>
+        String(item.id) ===
+        String(id)
     );
 
   if(!article) return;
 
   currentArticle=article;
 
-  const title =
-    getArticleTitle(article);
-
-  const summary =
-    getArticleSummary(article);
-
-  const content =
-    getArticleContent(article);
-
-
-  document.getElementById('articleBox').innerHTML=`
+  document.getElementById(
+    'articleBox'
+  ).innerHTML = `
 
     <h1>
-      ${esc(title)}
+      ${esc(
+        getArticleTitle(article)
+      )}
     </h1>
 
     ${
-      summary
+      getArticleSummary(article)
       ? `
-        <p
-          style="
-            color:var(--muted);
-            margin-bottom:15px;
-          "
-        >
+        <p style="
+          color:var(--muted);
+          margin-bottom:15px;
+        ">
           <strong>
-            ${esc(summary)}
+            ${esc(
+              getArticleSummary(article)
+            )}
           </strong>
         </p>
       `
@@ -930,13 +1826,19 @@ function openArticle(id){
         🔊 አዳምጥ
       </button>
 
+      <button onclick="speechStop()">
+        ⏹ አቁም
+      </button>
+
     </div>
 
     <div
       id="articleText"
       class="article-content"
     >
-      ${esc(content)}
+      ${esc(
+        getArticleContent(article)
+      )}
     </div>
 
   `;
@@ -946,29 +1848,15 @@ function openArticle(id){
 }
 
 
-/* =========================================================
-   BACK
-========================================================= */
-
 function backToTopic(){
 
-  if(!currentTopic){
+  if(currentTopic){
 
-    home();
-    return;
-
-  }
-
-  if(
-    childrenOf(currentTopic.parent_id || '').length ||
-    currentTopic.parent_id
-  ){
-
-    openSubtopic(currentTopic.id);
+    openTopic(currentTopic);
 
   }else{
 
-    openTopic(currentTopic);
+    home();
 
   }
 
@@ -997,11 +1885,11 @@ async function copyArticle(){
       `${title}\n\n${text}`
     );
 
-  }catch(e){
+  }catch(error){
 
     console.error(
       'Copy failed:',
-      e
+      error
     );
 
   }
@@ -1035,7 +1923,7 @@ async function shareArticle(){
         text
       });
 
-    }catch(e){}
+    }catch(error){}
 
   }else{
 
@@ -1047,81 +1935,66 @@ async function shareArticle(){
 
 
 /* =========================================================
-   SPEECH ENGINE
+   TEXT TO SPEECH
 ========================================================= */
+
+function speechLanguage(){
+
+  if(currentLang === 'am'){
+    return 'am-ET';
+  }
+
+  if(currentLang === 'en'){
+    return 'en-US';
+  }
+
+  return 'sid-ET';
+
+}
+
+
+function speechStop(){
+
+  if(
+    'speechSynthesis'
+    in window
+  ){
+
+    speechSynthesis.cancel();
+
+  }
+
+}
+
 
 function speakText(text){
 
   if(!text) return;
 
-  if(!('speechSynthesis' in window)){
+  if(
+    !('speechSynthesis' in window)
+  ){
 
     alert(
-      'የድምፅ ማንበብ በዚህ መሣሪያ አይደገፍም።'
+      'የድምፅ ማንበቢያ በዚህ መሣሪያ አይደገፍም።'
     );
 
     return;
 
   }
 
-  speechSynthesis.cancel();
+  speechStop();
 
   const utterance =
     new SpeechSynthesisUtterance(
       String(text).slice(0,12000)
     );
 
-
-  if(currentLang==='am'){
-
-    utterance.lang='am-ET';
-
-  }else if(currentLang==='en'){
-
-    utterance.lang='en-US';
-
-  }else{
-
-    utterance.lang='sid-ET';
-
-  }
-
-
-  const voices =
-    speechSynthesis.getVoices
-      ? speechSynthesis.getVoices()
-      : [];
-
-
-  const wanted =
-    utterance.lang.toLowerCase();
-
-
-  const voice =
-    voices.find(v =>
-      String(v.lang || '')
-        .toLowerCase()===wanted
-    )
-    ||
-    voices.find(v =>
-      String(v.lang || '')
-        .toLowerCase()
-        .startsWith(
-          wanted.split('-')[0]
-        )
-    );
-
-
-  if(voice){
-
-    utterance.voice=voice;
-
-  }
-
+  utterance.lang =
+    speechLanguage();
 
   utterance.rate=0.9;
   utterance.pitch=1;
-  utterance.volume=1;
 
   speechSynthesis.speak(
     utterance
@@ -1132,62 +2005,51 @@ function speakText(text){
 
 function speakArticle(){
 
-  const title =
-    document.querySelector(
-      '#articleBox h1'
-    )?.innerText || '';
-
   const text =
     document.getElementById(
       'articleText'
     )?.innerText || '';
 
-  speakText(
-    `${title}\n\n${text}`
-  );
+  speakText(text);
 
 }
 
 
-function speakArticleData(id,event){
-
-  if(event){
-
-    event.stopPropagation();
-
-  }
+function speakArticleData(id){
 
   const article =
-    articles.find(a =>
-      String(a.id)===String(id)
+    articles.find(
+      item =>
+        String(item.id) ===
+        String(id)
     );
 
   if(!article) return;
 
-  speakText(`
+  const text = [
 
-    ${getArticleTitle(article)}
+    getArticleTitle(article),
 
-    ${getArticleSummary(article)}
+    getArticleSummary(article),
 
-    ${getArticleContent(article)}
+    getArticleContent(article)
 
-  `);
+  ]
+  .filter(Boolean)
+  .join('. ');
+
+  speakText(text);
 
 }
 
 
-function speakTopic(id,event){
-
-  if(event){
-
-    event.stopPropagation();
-
-  }
+function speakTopic(id){
 
   const topic =
-    topics.find(t =>
-      String(t.id)===String(id)
+    topics.find(
+      item =>
+        String(item.id) ===
+        String(id)
     );
 
   if(!topic) return;
@@ -1198,19 +2060,27 @@ function speakTopic(id,event){
   const list =
     articlesOf(topic.id);
 
-  speakText(`
+  const text = [
 
-    ${getTopicTitle(topic)}
+    getTopicTitle(topic),
 
-    ${getTopicSummary(topic)}
+    getTopicSummary(topic),
 
-    ${children.length}
-    ንዑስ ርዕሶች አሉ።
+    ...children.map(
+      child =>
+        getTopicTitle(child)
+    ),
 
-    ${list.length}
-    ጽሑፎች አሉ።
+    ...list.map(
+      article =>
+        getArticleTitle(article)
+    )
 
-  `);
+  ]
+  .filter(Boolean)
+  .join('. ');
+
+  speakText(text);
 
 }
 
@@ -1231,1360 +2101,8 @@ function searchContent(){
       .trim()
       .toLowerCase();
 
-
-  if(!q){
-
-    home();
-    return;
-
-  }
-
-
-  const results =
-    articles.filter(article=>{
-
-      const text=[
-
-        article.title_am,
-        article.title_sid,
-        article.title_en,
-
-        article.summary_am,
-        article.summary_sid,
-        article.summary_en,
-
-        article.content_am,
-        article.content_sid,
-        article.content_en,
-
-        article.author_am,
-        article.author_sid,
-        article.author_en,
-
-        article.person_name,
-        article.place_name,
-
-        Array.isArray(article.keywords)
-          ? article.keywords.join(' ')
-          : article.keywords
-
-      ]
-      .filter(Boolean)
-      .join(' ')
-      .toLowerCase();
-
-
-      return text.includes(q);
-
-    });
-
-
-  const box =
-    document.getElementById(
-      'searchResults'
-    );
-
-
-  if(!results.length){
-
-    box.innerHTML=`
-
-      <div class="loading">
-
-        “${esc(q)}”
-        የሚለው ፍለጋ
-        ውጤት አልተገኘም።
-
-      </div>
-
-    `;
-
-  }else{
-
-    box.innerHTML =
-      results.map(article=>`
-
-        <div class="result">
-
-          <h3>
-            ${esc(getArticleTitle(article))}
-          </h3>
-
-          <small>
-            ${esc(getArticleSummary(article))}
-          </small>
-
-          <div class="article-actions">
-
-            <button
-              onclick="openArticle('${article.id}')"
-            >
-              📖 አንብብ
-            </button>
-
-            <button
-              onclick="speakArticleData('${article.id}',event)"
-            >
-              🔊 አዳምጥ
-            </button>
-
-          </div>
-
-        </div>
-
-      `).join('');
-
-  }
-
-
-  showView('searchView');
-
-}
-
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
-function setLanguage(lang){
-
-  if(!LANGS[lang]) return;
-
-  currentLang=lang;
-
-  localStorage.setItem(
-    'sidaaman_lang',
-    lang
-  );
-
-  renderCategories();
-
-
-  if(currentTopic){
-
-    if(currentTopic.parent_id){
-
-      openSubtopic(
-        currentTopic.id
-      );
-
-    }else{
-
-      openTopic(
-        currentTopic
-      );
-
-    }
-
-  }
-
-}
-
-
-/* =========================================================
-   DARK MODE
-========================================================= */
-
-function toggleDark(){
-
-  document.body.classList.toggle(
-    'dark'
-  );
-
-  localStorage.setItem(
-    'sidaaman_dark',
-    document.body.classList.contains('dark')
-  );
-
-}
-
-
-/* =========================================================
-   FONT SIZE
-========================================================= */
-
-let fontScale =
-  Number(
-    localStorage.getItem(
-      'sidaaman_font'
-    )
-  ) || 100;
-
-
-function fontSize(delta){
-
-  fontScale +=
-    delta * 5;
-
-  fontScale =
-    Math.max(
-      85,
-      Math.min(
-        125,
-        fontScale
-      )
-    );
-
-
-  document.body.style.fontSize =
-    fontScale + '%';
-
-
-  localStorage.setItem(
-    'sidaaman_font',
-    fontScale
-  );
-
-}
-
-
-/* =========================================================
-   LOAD DATA
-========================================================= */
-
-async function load(){
-
-  const grid =
-    document.getElementById(
-      'categoryGrid'
-    );
-
-
-  grid.innerHTML=`
-
-    <div class="loading">
-
-      መረጃውን በመጫን ላይ…
-
-    </div>
-
-  `;
-
-
-  try{
-
-    const [
-      topicsResult,
-      articlesResult
-    ] = await Promise.all([
-
-      db
-        .from('sidama_topics')
-        .select('*')
-        .eq('is_active',true)
-        .order(
-          'sort_order',
-          {ascending:true}
-        ),
-
-      db
-        .from('sidama_articles')
-        .select('*')
-        .eq(
-          'editorial_status',
-          'published'
-        )
-        .order(
-          'sort_order',
-          {ascending:true}
-        )
-        .limit(1000)
-
-    ]);
-
-
-    if(topicsResult.error){
-
-      throw topicsResult.error;
-
-    }
-
-
-    if(articlesResult.error){
-
-      throw articlesResult.error;
-
-    }
-
-
-    topics =
-      topicsResult.data || [];
-
-    articles =
-      articlesResult.data || [];
-
-
-    const languageSelect =
-      document.getElementById(
-        'languageSelect'
-      );
-
-    if(languageSelect){
-
-      languageSelect.value =
-        currentLang;
-
-    }
-
-
-    renderCategories();
-
-
-  }catch(error){
-
-    console.error(
-      'LOAD ERROR:',
-      error
-    );
-
-
-    grid.innerHTML=`
-
-      <div class="error">
-
-        መረጃውን መጫን አልተቻለም።
-
-        <br><br>
-
-        <small>
-          ${esc(
-            error?.message ||
-            'Unknown error'
-          )}
-        </small>
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-/* =========================================================
-   RESTORE SETTINGS
-========================================================= */
-
-function restoreSettings(){
-
-  if(
-    localStorage.getItem(
-      'sidaaman_dark'
-    )==='true'
-  ){
-
-    document.body.classList.add(
-      'dark'
-    );
-
-  }
-
-
-  const saved =
-    Number(
-      localStorage.getItem(
-        'sidaaman_font'
-      )
-    );
-
-
-  if(saved){
-
-    fontScale=saved;
-
-    document.body.style.fontSize =
-      fontScale+'%';
-
-  }
-
-}
-
-
-/* =========================================================
-   SPEECH VOICES
-========================================================= */
-
-if(
-  'speechSynthesis' in window
-){
-
-  speechSynthesis.onvoiceschanged =
-    function(){};
-
-}
-
-
-/* =========================================================
-   START
-========================================================= */
-
-restoreSettings();
-
-load();
-
-</script>
-
-  padding:13px 15px;
-  
-.article-card{
-  background:white;
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:20px;
-  box-shadow:0 4px 14px rgba(0,0,0,.04);
-}
-
-.article-card h3{
-  color:var(--green);
-  margin-bottom:8px;
-}
-
-.article-card p{
-  color:var(--muted);
-  font-size:14px;
-}
-
-.read-btn{
-  margin-top:15px;
-  border:0;
-  background:var(--green);
-  color:white;
-  padding:9px 14px;
-  border-radius:8px;
-}
-
-/* ARTICLE */
-
-.article{
-  background:white;
-  border-radius:18px;
-  padding:25px;
-  box-shadow:var(--shadow);
-}
-
-.article h1{
-  color:var(--green);
-  margin-bottom:15px;
-}
-
-.article-content{
-  white-space:pre-wrap;
-  font-size:17px;
-}
-
-.article-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin:20px 0;
-}
-
-.article-actions button{
-  border:1px solid var(--border);
-  background:#f7faf8;
-  padding:8px 13px;
-  border-radius:8px;
-}
-
-/* SEARCH RESULTS */
-
-.search-results{
-  display:grid;
-  gap:12px;
-}
-
-.result{
-  background:white;
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:18px;
-}
-
-.result h3{
-  color:var(--green);
-}
-
-.result small{
-  color:var(--muted);
-}
-
-/* MENU */
-
-.drawer{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  z-index:200;
-  display:none;
-}
-
-.drawer.open{
-  display:block;
-}
-
-.drawer-panel{
-  width:min(350px,88vw);
-  height:100%;
-  background:white;
-  padding:20px;
-  overflow:auto;
-}
-
-.drawer-panel h2{
-  color:var(--green);
-  margin-bottom:20px;
-}
-
-.drawer-item{
-  width:100%;
-  text-align:left;
-  border:0;
-  background:#f5f8f6;
-  padding:13px;
-  margin-bottom:8px;
-  border-radius:9px;
-  color:var(--text);
-}
-
-.drawer-item:hover{
-  background:#e5f1eb;
-}
-
-/* SETTINGS */
-
-.panel{
-  background:white;
-  padding:25px;
-  border-radius:16px;
-  box-shadow:var(--shadow);
-  margin-bottom:20px;
-}
-
-.panel h2{
-  color:var(--green);
-  margin-bottom:12px;
-}
-
-
-<
-
-  <!-- SEARCH -->
-
-  <section id="searchView" class="view">
-
-    <button class="back" onclick="home()">← ወደ መነሻ</button>
-
-    <div class="section-title">
-      <h2>የፍለጋ ውጤት</h2>
-    </div>
-
-    <div id="searchResults" class="search-results"></div>
-
-  </section>
-
-  <!-- SETTINGS -->
-
-  <section id="settingsView" class="view">
-
-    <button class="back" onclick="home()">← ወደ መነሻ</button>
-
-    <div class="panel">
-
-      <h2>⚙️ ቅንብሮች</h2>
-
-      <div class="setting-row">
-        <span>ቋንቋ</span>
-
-        <select id="languageSelect" onchange="setLanguage(this.value)">
-          <option value="am">አማርኛ</option>
-          <option value="sid">Sidaamu Afoo</option>
-          <option value="en">English</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <span>ጨለማ / ብርሃን</span>
-        <button onclick="toggleDark()">🌙 / ☀️</button>
-      </div>
-
-      <div class="setting-row">
-        <span>የጽሑፍ መጠን</span>
-
-        <div>
-          <button onclick="fontSize(-1)">A−</button>
-          <button onclick="fontSize(1)">A+</button>
-        </div>
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- ABOUT -->
-
-  <section id="aboutView" class="view">
-
-    <button class="back" onclick="home()">← ወደ መነሻ</button>
-
-    <div class="panel">
-
-      <h2>ስለ ሲዳማን እንወቅ</h2>
-
-      <p>
-        ሲዳማን እንወቅ ስለ ሲዳማ ሕዝብ ታሪክ፣ ባህል፣
-        ቋንቋ፣ ማንነት፣ ጀግኖች፣ መልክዓ ምድር፣
-        ቱሪዝም፣ ቅዱሳት ሥፍራዎች እና ሌሎች የሕዝቡን
-        ሕይወት የሚመለከቱ ጉዳዮችን በዲጂታል መልክ
-        ለማቅረብ የተዘጋጀ መድረክ ነው።
-      </p>
-
-    </div>
-
-  </section>
-
-  <!-- SOURCES -->
-
-  <section id="sourcesView" class="view">
-
-    <button class="back" onclick="home()">← ወደ መነሻ</button>
-
-    <div class="panel">
-
-      <h2>📚 ምንጮች</h2>
-
-      <p>
-
-
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-  'https://geznekrpdubpgsegseer.supabase.co';
-
-const SUPABASE_KEY =
-  'sb_publishable_v6cciBIeO_Gr3q3ZHto2vQ_wQp9vl6e';
-
-const db =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
-const LANGS = {
-
-  am:{
-    name:'አማርኛ',
-    title:'title_am',
-    summary:'summary_am',
-    content:'content_am'
-  },
-
-  sid:{
-    name:'Sidaamu Afoo',
-    title:'title_sid',
-    summary:'summary_sid',
-    content:'content_sid'
-  },
-
-  en:{
-    name:'English',
-    title:'title_en',
-    summary:'summary_en',
-    content:'content_en'
-  }
-
-};
-
-let currentLang =
-  localStorage.getItem('sidaaman_lang') || 'am';
-
-
-/* =========================================================
-   DATA
-========================================================= */
-
-let topics = [];
-let articles = [];
-
-let currentTopic = null;
-
-
-/* =========================================================
-   AGREED 16 CATEGORIES
-========================================================= */
-
-const CATEGORIES = [
-
- {
-  id:'history',
-  icon:'📜',
-  am:'የሲዳማ ታሪክ',
-  sid:'Sidama Seera',
-  en:'History of Sidama',
-  aliases:[
-    'የሲዳማ ታሪክ'
-  ]
- },
-
- {
-  id:'culture',
-  icon:'🎭',
-  am:'የሲዳማ ባህል',
-  sid:'Sidamu Aadaa',
-  en:'Sidama Culture',
-  aliases:[
-    'የሲዳማ ባሕል'
-  ]
- },
-
- {
-  id:'language',
-  icon:'🔤',
-  am:'የሲዳማ ቋንቋ',
-  sid:'Sidaamu Afoo',
-  en:'Sidama Language',
-  aliases:[
-    'የሲዳማ ቋንቋ'
-  ]
- },
-
- {
-  id:'clan',
-  icon:'👥',
-  am:'የሲዳማ ጎሳ / የጎሳ ዝርያ',
-  sid:'Sidamu Gossa',
-  en:'Sidama Clans',
-  aliases:[
-    'የሲዳማ ጎሳ',
-    'የሲዳማ ጎሳ / የጎሳ ዝርያ'
-  ]
- },
-
- {
-  id:'heroes',
-  icon:'🛡️',
-  am:'የሲዳማ ጀግኖች',
-  sid:'Sidamu Gaarey',
-  en:'Sidama Heroes',
-  aliases:[
-    'የሲዳማ ጀግኖች'
-  ]
- },
-
- {
-  id:'geography',
-  icon:'🗺️',
-  am:'የሲዳማ መልክዓ ምድር',
-  sid:'Sidamu Deerru',
-  en:'Geography of Sidama',
-  aliases:[
-    'የሲዳማ መልክዓ ምድር'
-  ]
- },
-
- {
-  id:'tourism',
-  icon:'🏞️',
-  am:'የሲዳማ ቱሪዝም',
-  sid:'Sidamu Turizime',
-  en:'Sidama Tourism',
-  aliases:[
-    'የሲዳማ ቱሪዝም'
-  ]
- },
-
- {
-  id:'sacred',
-  icon:'⛪',
-  am:'የሲዳማ ቅዱስ ሥፍራዎች',
-  sid:'Sidamu Geeshsha Soorri',
-  en:'Sacred Places of Sidama',
-  aliases:[
-    'የሲዳማ ቅዱሳት ስፍራዎች',
-    'የሲዳማ ቅዱስ ሥፍራዎች'
-  ]
- },
-
- {
-  id:'accommodation',
-  icon:'🏨',
-  am:'ማረፊያ ሥፍራዎች',
-  sid:'Shalagaancho',
-  en:'Accommodation',
-  aliases:[
-    'ሆቴል • ሎጅ • ሪዞርት',
-    'ሆቴል',
-    'ሎጅ',
-    'ሪዞርት'
-  ]
- },
-
- {
-  id:'coffee',
-  icon:'☕',
-  am:'የሲዳማ ቡና',
-  sid:'Sidamu Buna',
-  en:'Sidama Coffee',
-  aliases:[
-    'የሲዳማ ቡና'
-  ]
- },
-
- {
-  id:'music',
-  icon:'🎵',
-  am:'የሲዳማ ሙዚቃና ኪነ-ጥበብ',
-  sid:'Sidamu Muuziqaa nna Arti',
-  en:'Sidama Music and Arts',
-  aliases:[
-    'የሲዳማ ኪነ-ጥበብና ሥነ-ጽሑፍ',
-    'ኪነ-ጥበብ'
-  ]
- },
-
- {
-  id:'literature',
-  icon:'📚',
-  am:'የሲዳማ ሥነ-ጽሑፍ',
-  sid:'Sidamu Borro',
-  en:'Sidama Literature',
-  aliases:[
-    'ሥነ-ጽሑፍ'
-  ]
- },
-
- {
-  id:'education',
-  icon:'🎓',
-  am:'ትምህርትና ዕውቀት',
-  sid:'Tamaarimma nna Erga',
-  en:'Education and Knowledge',
-  aliases:[
-    'ትምህርትና ዕውቀት'
-  ]
- },
-
- {
-  id:'social',
-  icon:'🤝',
-  am:'የሲዳማ ማኅበራዊ ሕይወት',
-  sid:'Sidamu Sokka',
-  en:'Sidama Social Life',
-  aliases:[
-    'የሲዳማ ማኅበራዊ ሕይወት'
-  ]
- },
-
- {
-  id:'sport',
-  icon:'⚽',
-  am:'የሲዳማ ስፖርት',
-  sid:'Sidamu Sporte',
-  en:'Sidama Sports',
-  aliases:[
-    'የሲዳማ ስፖርት'
-  ]
- },
-
- {
-  id:'cities',
-  icon:'🏙️',
-  am:'የሲዳማ ከተሞችና መንደሮች',
-  sid:'Sidamu Katamoota nna Gande',
-  en:'Cities and Villages of Sidama',
-  aliases:[
-    'የሲዳማ ከተሞችና መንደሮች'
-  ]
- }
-
-];
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function esc(value){
-
-  return String(value ?? '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#039;');
-
-}
-
-
-function currentField(obj, type){
-
-  const lang = LANGS[currentLang];
-
-  if(!lang) return '';
-
-  return obj?.[lang[type]] || '';
-
-}
-
-
-function getTopicTitle(topic){
-
-  return currentField(topic,'title')
-    || topic.title_am
-    || topic.title_sid
-    || topic.title_en
-    || '';
-
-
-}
-
-
-function getArticleTitle(article){
-
-  return currentField(article,'title')
-    || article.title_am
-    || article.title_sid
-    || article.title_en
-    || '';
-
-
-}
-
-
-function getArticleSummary(article){
-
-  return currentField(article,'summary')
-    || article.summary_am
-    || article.summary_sid
-    || article.summary_en
-    || '';
-
-
-}
-
-
-function getArticleContent(article){
-
-  return currentField(article,'content')
-    || article.content_am
-    || article.content_sid
-    || article.content_en
-    || '';
-
-
-}
-
-
-/* =========================================================
-   VIEW
-========================================================= */
-
-function showView(id){
-
-  document
-    .querySelectorAll('.view')
-    .forEach(v=>v.classList.remove('active'));
-
-  const el =
-    document.getElementById(id);
-
-  if(el){
-    el.classList.add('active');
-  }
-
-  window.scrollTo({
-    top:0,
-    behavior:'smooth'
-  });
-
-  closeMenu();
-
-}
-
-
-function home(){
-
-  showView('homeView');
-
-  document.getElementById('searchInput').value='';
-
-}
-
-
-/* =========================================================
-   MENU
-========================================================= */
-
-function openMenu(){
-
-  document
-    .getElementById('drawer')
-    .classList.add('open');
-
-}
-
-
-function closeMenu(event){
-
-  const drawer =
-    document.getElementById('drawer');
-
-  if(!event || event.target===drawer){
-    drawer.classList.remove('open');
-  }
-
-}
-
-
-/* =========================================================
-   CATEGORY HOME
-========================================================= */
-
-function renderCategories(){
-
-  const grid =
-    document.getElementById('categoryGrid');
-
-  grid.innerHTML =
-    CATEGORIES.map((cat,index)=>{
-
-      const found =
-        findTopic(cat.aliases);
-
-      const count =
-        found
-          ? articles.filter(a=>
-              a.topic_id===found.id ||
-              a.category_id===found.id
-            ).length
-          : 0;
-
-      return `
-        <button
-          class="category"
-          onclick="openCategory('${cat.id}')"
-        >
-
-          <div class="number">
-            ${index+1}
-          </div>
-
-          <h3>
-            ${cat.icon} ${esc(cat[currentLang] || cat.am)}
-          </h3>
-
-          <p>
-            ${
-              found
-              ? `${count} ይዘት አለ`
-              : 'ይዘቱ በመዘጋጀት ላይ ነው'
-            }
-          </p>
-
-        </button>
-      `;
-
-    }).join('');
-
-}
-
-
-/* =========================================================
-   FIND TOPIC
-========================================================= */
-
-function findTopic(aliases){
-
-  if(!aliases || !aliases.length){
-    return null;
-  }
-
-  return topics.find(topic=>{
-
-    const values = [
-      topic.title_am,
-      topic.title_sid,
-      topic.title_en,
-      topic.name,
-      topic.slug
-    ]
-    .filter(Boolean)
-    .map(x=>String(x).trim());
-
-    return aliases.some(alias=>
-      values.includes(alias)
-    );
-
-  }) || null;
-
-}
-
-
-/* =========================================================
-   OPEN CATEGORY
-========================================================= */
-
-function openCategory(id){
-
-  const cat =
-    CATEGORIES.find(x=>x.id===id);
-
-  if(!cat) return;
-
-  const topic =
-    findTopic(cat.aliases);
-
-  if(!topic){
-
-    document.getElementById('topicHead').innerHTML=`
-      <h2>
-        ${cat.icon}
-        ${esc(cat[currentLang] || cat.am)}
-      </h2>
-
-      <p style="margin-top:10px;color:var(--muted)">
-        ይህ ክፍል በመዘጋጀት ላይ ነው።
-        የክፍሉ መዋቅር ተዘጋጅቷል፣
-        ይዘቱ ሲጨመር እዚህ ይታያል።
-      </p>
-    `;
-
-    document.getElementById('articleGrid').innerHTML='';
-
-    currentTopic=null;
-
-    showView('topicView');
-
-    return;
-  }
-
-  openTopic(topic);
-
-}
-
-
-/* =========================================================
-   OPEN TOPIC
-========================================================= */
-
-function openTopic(topic){
-
-  currentTopic=topic;
-
-  const title =
-    getTopicTitle(topic);
-
-  document.getElementById('topicHead').innerHTML=`
-    <h2>${esc(title)}</h2>
-  `;
-
-  const list =
-    articles.filter(article=>
-      article.topic_id===topic.id ||
-      article.category_id===topic.id
-    );
-
-  const grid =
-    document.getElementById('articleGrid');
-
-  if(!list.length){
-
-    grid.innerHTML=`
-      <div class="loading">
-        በዚህ ክፍል ውስጥ ጽሑፍ አልተገኘም።
-      </div>
-    `;
-
-  }else{
-
-    grid.innerHTML =
-      list.map(article=>`
-
-        <article class="article-card">
-
-          <h3>
-            ${esc(getArticleTitle(article))}
-          </h3>
-
-          <p>
-            ${esc(getArticleSummary(article))}
-          </p>
-
-          <button
-            class="read-btn"
-            onclick="openArticle('${article.id}')"
-          >
-            አንብብ
-          </button>
-
-        </article>
-
-      `).join('');
-
-  }
-
-  showView('topicView');
-
-}
-
-
-/* =========================================================
-   ARTICLE
-========================================================= */
-
-function openArticle(id){
-
-  const article =
-    articles.find(a=>String(a.id)===String(id));
-
-  if(!article) return;
-
-  const title =
-    getArticleTitle(article);
-
-  const content =
-    getArticleContent(article);
-
-  document.getElementById('articleBox').innerHTML=`
-
-    <h1>${esc(title)}</h1>
-
-    <div class="article-actions">
-
-      <button onclick="copyArticle()">
-        📋 ቅዳ
-      </button>
-
-      <button onclick="shareArticle()">
-        🔗 አጋራ
-      </button>
-
-      <button onclick="speakArticle()">
-        🔊 አንብብ
-      </button>
-
-    </div>
-
-    <div
-      id="articleText"
-      class="article-content"
-    >${esc(content)}</div>
-
-  `;
-
-  showView('articleView');
-
-}
-
-
-function backToTopic(){
-
-  if(currentTopic){
-    openTopic(currentTopic);
-  }else{
-    home();
-  }
-
-}
-
-
-/* =========================================================
-   COPY
-========================================================= */
-
-function copyArticle(){
-
-  const text =
-    document.getElementById('articleText')?.innerText || '';
-
-  navigator.clipboard
-    ?.writeText(text);
-
-}
-
-
-/* =========================================================
-   SHARE
-========================================================= */
-
-async function shareArticle(){
-
-  const title =
-    document.querySelector('#articleBox h1')?.innerText
-    || 'ሲዳማን እንወቅ';
-
-  const text =
-    document.getElementById('articleText')?.innerText || '';
-
-  if(navigator.share){
-
-    try{
-
-      await navigator.share({
-        title,
-        text
-      });
-
-    }catch(e){}
-
-  }else{
-
-    copyArticle();
-
-  }
-
-}
-
-
-/* =========================================================
-   SPEAK
-========================================================= */
-
-function speakArticle(){
-
-  const text =
-    document.getElementById('articleText')?.innerText || '';
-
-  if(!('speechSynthesis' in window)) return;
-
-  speechSynthesis.cancel();
-
-  const u =
-    new SpeechSynthesisUtterance(text);
-
-  if(currentLang==='am'){
-    u.lang='am-ET';
-  }else if(currentLang==='en'){
-    u.lang='en-US';
-  }else{
-    u.lang='sid';
-  }
-
-  speechSynthesis.speak(u);
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-function searchContent(){
-
-  const q =
-    document.getElementById('searchInput')
-      .value
-      .trim()
-      .toLowerCase();
-
   if(!q) return;
+
 
   const results =
     articles.filter(article=>{
@@ -2620,44 +2138,71 @@ function searchContent(){
 
     });
 
+
   const box =
-    document.getElementById('searchResults');
+    document.getElementById(
+      'searchResults'
+    );
+
 
   if(!results.length){
 
-    box.innerHTML=`
+    box.innerHTML = `
+
       <div class="loading">
-        “${esc(q)}” የሚለው ፍለጋ ውጤት አልተገኘም።
+
+        “${esc(q)}”
+        የሚለው ፍለጋ ውጤት
+        አልተገኘም።
+
       </div>
+
     `;
 
   }else{
 
     box.innerHTML =
-      results.map(article=>`
+      results.map(
+        article => `
 
-        <div class="result">
+          <div class="result">
 
-          <h3>
-            ${esc(getArticleTitle(article))}
-          </h3>
+            <h3>
+              ${esc(
+                getArticleTitle(article)
+              )}
+            </h3>
 
-          <small>
-            ${esc(getArticleSummary(article))}
-          </small>
+            <small>
+              ${esc(
+                getArticleSummary(article)
+              )}
+            </small>
 
-          <br>
+            <div class="article-actions">
 
-          <button
-            class="read-btn"
-            onclick="openArticle('${article.id}')"
-          >
-            አንብብ
-          </button>
+              <button
+                onclick="
+                  openArticle('${article.id}')
+                "
+              >
+                📖 አንብብ
+              </button>
 
-        </div>
+              <button
+                onclick="
+                  speakArticleData('${article.id}')
+                "
+              >
+                🔊 አዳምጥ
+              </button>
 
-      `).join('');
+            </div>
+
+          </div>
+
+        `
+      ).join('');
 
   }
 
@@ -2674,6 +2219,8 @@ function setLanguage(lang){
 
   if(!LANGS[lang]) return;
 
+  speechStop();
+
   currentLang=lang;
 
   localStorage.setItem(
@@ -2681,10 +2228,21 @@ function setLanguage(lang){
     lang
   );
 
+  const select =
+    document.getElementById(
+      'languageSelect'
+    );
+
+  if(select){
+    select.value=lang;
+  }
+
   renderCategories();
 
   if(currentTopic){
+
     openTopic(currentTopic);
+
   }
 
 }
@@ -2696,11 +2254,15 @@ function setLanguage(lang){
 
 function toggleDark(){
 
-  document.body.classList.toggle('dark');
+  document.body.classList.toggle(
+    'dark'
+  );
 
   localStorage.setItem(
     'sidaaman_dark',
-    document.body.classList.contains('dark')
+    document.body.classList.contains(
+      'dark'
+    )
   );
 
 }
@@ -2711,21 +2273,28 @@ function toggleDark(){
 ========================================================= */
 
 let fontScale =
-  Number(localStorage.getItem('sidaaman_font')) || 100;
+  Number(
+    localStorage.getItem(
+      'sidaaman_font'
+    )
+  ) || 100;
 
 
 function fontSize(delta){
 
-  fontScale += delta*5;
+  fontScale += delta * 5;
 
   fontScale =
     Math.max(
       85,
-      Math.min(125,fontScale)
+      Math.min(
+        125,
+        fontScale
+      )
     );
 
   document.body.style.fontSize =
-    fontScale+'%';
+    fontScale + '%';
 
   localStorage.setItem(
     'sidaaman_font',
@@ -2736,19 +2305,24 @@ function fontSize(delta){
 
 
 /* =========================================================
-   LOAD
+   LOAD SUPABASE DATA
 ========================================================= */
 
 async function load(){
 
   const grid =
-    document.getElementById('categoryGrid');
+    document.getElementById(
+      'categoryGrid'
+    );
 
-  grid.innerHTML=`
+  grid.innerHTML = `
+
     <div class="loading">
       መረጃውን በመጫን ላይ…
     </div>
+
   `;
+
 
   try{
 
@@ -2760,14 +2334,30 @@ async function load(){
       db
         .from('sidama_topics')
         .select('*')
-        .eq('is_active',true)
-        .order('sort_order',{ascending:true}),
+        .eq(
+          'is_active',
+          true
+        )
+        .order(
+          'sort_order',
+          {
+            ascending:true
+          }
+        ),
 
       db
         .from('sidama_articles')
         .select('*')
-        .eq('editorial_status','published')
-        .order('sort_order',{ascending:true})
+        .eq(
+          'editorial_status',
+          'published'
+        )
+        .order(
+          'sort_order',
+          {
+            ascending:true
+          }
+        )
         .limit(1000)
 
     ]);
@@ -2775,22 +2365,12 @@ async function load(){
 
     if(topicsResult.error){
 
-      console.error(
-        'TOPICS ERROR:',
-        topicsResult.error
-      );
-
       throw topicsResult.error;
 
     }
 
 
     if(articlesResult.error){
-
-      console.error(
-        'ARTICLES ERROR:',
-        articlesResult.error
-      );
 
       throw articlesResult.error;
 
@@ -2804,8 +2384,28 @@ async function load(){
       articlesResult.data || [];
 
 
-    document.getElementById('languageSelect').value =
-      currentLang;
+    console.log(
+      'Sidama topics:',
+      topics.length
+    );
+
+    console.log(
+      'Sidama articles:',
+      articles.length
+    );
+
+
+    const languageSelect =
+      document.getElementById(
+        'languageSelect'
+      );
+
+    if(languageSelect){
+
+      languageSelect.value =
+        currentLang;
+
+    }
 
 
     renderCategories();
@@ -2813,9 +2413,12 @@ async function load(){
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      'SUPABASE ERROR:',
+      error
+    );
 
-    grid.innerHTML=`
+    grid.innerHTML = `
 
       <div class="error">
 
@@ -2824,7 +2427,10 @@ async function load(){
         <br><br>
 
         <small>
-          ${esc(error?.message || 'Unknown error')}
+          ${esc(
+            error?.message ||
+            'Unknown error'
+          )}
         </small>
 
       </div>
@@ -2843,14 +2449,23 @@ async function load(){
 function restoreSettings(){
 
   if(
-    localStorage.getItem('sidaaman_dark')==='true'
+    localStorage.getItem(
+      'sidaaman_dark'
+    ) === 'true'
   ){
-    document.body.classList.add('dark');
+
+    document.body.classList.add(
+      'dark'
+    );
+
   }
+
 
   const saved =
     Number(
-      localStorage.getItem('sidaaman_font')
+      localStorage.getItem(
+        'sidaaman_font'
+      )
     );
 
   if(saved){
@@ -2858,7 +2473,7 @@ function restoreSettings(){
     fontScale=saved;
 
     document.body.style.fontSize =
-      fontScale+'%';
+      fontScale + '%';
 
   }
 

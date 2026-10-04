@@ -2276,31 +2276,51 @@ function searchContent(){
 
 function setLanguage(lang){
 
-  if(!LANGS[lang]) return;
+  try{
 
-  speechStop();
+    if(!LANGS[lang]) return;
 
-  currentLang=lang;
+    speechStop();
 
-  localStorage.setItem(
-    'sidaaman_lang',
-    lang
-  );
+    currentLang = lang;
 
-  const select =
-    document.getElementById(
-      'languageSelect'
+    localStorage.setItem(
+      'sidaaman_lang',
+      lang
     );
 
-  if(select){
-    select.value=lang;
-  }
+    const select =
+      document.getElementById(
+        'languageSelect'
+      );
 
-  renderCategories();
+    if(select){
+      select.value = lang;
+    }
 
-  if(currentTopic){
+    renderCategories();
 
-    openTopic(currentTopic);
+    if(currentTopic){
+
+      openTopic(currentTopic);
+
+    }
+
+  }catch(error){
+
+    console.error(
+      'Language switch error:',
+      error
+    );
+
+    try{
+      renderCategories();
+    }catch(e){
+      console.error(
+        'Category render error:',
+        e
+      );
+    }
 
   }
 

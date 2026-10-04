@@ -643,7 +643,22 @@ function getContent(item){
 
 }
 
+function getContentPreview(item){
 
+  if(!item) return '';
+
+  const content =
+    String(getContent(item) || '').trim();
+
+  if(content){
+    return content.length > 500
+      ? content.slice(0,500).trim() + '…'
+      : content;
+  }
+
+  return getSummary(item);
+
+}
 /* =========================================================
    LANGUAGE UI
    ========================================================= */

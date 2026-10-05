@@ -28,7 +28,7 @@ body{
   background:var(--background);
   color:var(--text);
   font-family:Arial,"Noto Sans Ethiopic",sans-serif;
-  line-height:1.75;
+  line-height:1.8;
 }
 
 button,
@@ -197,7 +197,7 @@ main{
 }
 
 .card h3{
-  margin:0 0 6px;
+  margin:0 0 8px;
   color:var(--primary-dark);
   font-size:1.08rem;
 }
@@ -205,6 +205,7 @@ main{
 .card p{
   margin:0;
   color:var(--muted);
+  line-height:1.7;
 }
 
 .back{
@@ -215,23 +216,113 @@ main{
   background:#fff;
   border:1px solid var(--border);
   border-radius:18px;
-  padding:24px;
+  padding:30px;
   box-shadow:var(--shadow);
+  max-width:1000px;
+  margin:0 auto;
 }
 
 .article h1{
-  margin-top:0;
+  margin:0 0 14px;
   color:var(--primary-dark);
+  font-size:clamp(1.6rem,4vw,2.4rem);
+  line-height:1.45;
 }
 
 .article-summary{
   color:var(--muted);
-  margin-bottom:18px;
+  margin-bottom:24px;
+  padding:14px 16px;
+  background:var(--secondary);
+  border-radius:12px;
+  font-size:1rem;
 }
 
 .article-content{
-  white-space:pre-wrap;
+  color:var(--text);
+  font-size:1.12rem;
+  line-height:2.05;
   word-break:break-word;
+  overflow-wrap:anywhere;
+}
+
+/*
+   አስፈላጊ:
+   Supabase content_* ውስጥ ያሉ አንቀጾች
+   በእውነት እንዲለዩ ይረዳል።
+*/
+.article-content p{
+  margin:0 0 22px;
+}
+
+.article-content p:last-child{
+  margin-bottom:0;
+}
+
+.article-content h2{
+  margin:32px 0 14px;
+  color:var(--primary-dark);
+  font-size:1.45rem;
+  line-height:1.5;
+}
+
+.article-content h3{
+  margin:28px 0 12px;
+  color:var(--primary-dark);
+  font-size:1.25rem;
+}
+
+.article-content ul,
+.article-content ol{
+  padding-left:28px;
+  margin:0 0 22px;
+}
+
+.article-content li{
+  margin-bottom:8px;
+}
+
+.article-tools{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:28px;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+}
+
+.article-sources{
+  margin-top:30px;
+  padding:20px;
+  background:var(--secondary);
+  border-radius:14px;
+  border:1px solid var(--border);
+}
+
+.article-sources h3{
+  margin-top:0;
+  color:var(--primary-dark);
+}
+
+.article-sources p{
+  margin:0;
+  white-space:pre-wrap;
+  line-height:1.8;
+}
+
+.reader-info{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:18px;
+}
+
+.reader-badge{
+  background:var(--secondary);
+  border-radius:999px;
+  padding:6px 11px;
+  color:var(--primary-dark);
+  font-size:.85rem;
 }
 
 .notice{
@@ -361,11 +452,22 @@ dialog::backdrop{
   color:var(--text);
 }
 
+.dark .article,
+.dark .panel,
+.dark .notice{
+  background:#18221e;
+}
+
+.dark .article-content{
+  color:var(--text);
+}
+
 .dark footer{
   background:#071b12;
 }
 
 @media(max-width:650px){
+
   .nav{
     align-items:flex-start;
   }
@@ -387,7 +489,12 @@ dialog::backdrop{
   }
 
   .article{
-    padding:18px;
+    padding:20px 16px;
+  }
+
+  .article-content{
+    font-size:1.08rem;
+    line-height:2;
   }
 }
 </style>
@@ -397,14 +504,26 @@ dialog::backdrop{
 
 <header>
   <div class="nav">
-    <div class="brand">ሲዳማን እንወቅ</div>
+
+    <div class="brand">
+      ሲዳማን እንወቅ
+    </div>
 
     <div class="nav-actions">
-      <button class="btn" id="homeBtn">🏠 መነሻ</button>
-      <button class="btn" id="menuBtn">☰ MENU</button>
+
+      <button class="btn" id="homeBtn">
+        🏠 መነሻ
+      </button>
+
+      <button class="btn" id="menuBtn">
+        ☰ MENU
+      </button>
+
     </div>
+
   </div>
 </header>
+
 
 <main>
 
@@ -419,6 +538,7 @@ dialog::backdrop{
   <div class="languages" id="languages"></div>
 
   <div class="search-box">
+
     <input
       id="searchInput"
       type="search"
@@ -426,20 +546,28 @@ dialog::backdrop{
       placeholder="በርዕስ፣ ንዑስ ርዕስ፣ ሰው ስም፣ ቦታ ወይም ቁልፍ ቃል ይፈልጉ..."
     >
 
-    <button class="btn primary" id="searchBtn">
+    <button
+      class="btn primary"
+      id="searchBtn"
+    >
       🔎 ፈልግ
     </button>
+
   </div>
 
 </section>
 
+
 <div id="view">
+
   <div class="notice loading">
     መረጃውን በመጫን ላይ…
   </div>
+
 </div>
 
 </main>
+
 
 <footer>
 
@@ -448,20 +576,25 @@ dialog::backdrop{
   </div>
 
   <div style="margin-top:8px">
-    <a href="mailto:ezrasamuel2ezrasamuel2721@gmail.com">
-      ezrasamuel2ezrasamuel2721@gmail.com
+
+    <a href="mailto:ezrasamuel2721@gmail.com">
+      ezrasamuel2721@gmail.com
     </a>
+
     ·
+
     <a href="tel:0962244464">
       0962244464
     </a>
+
   </div>
 
   <div style="margin-top:8px">
-    ሲዳማን እንወቅ
+    Created by Ezra Samuel Abebe
   </div>
 
 </footer>
+
 
 <dialog id="menuDialog">
 
@@ -510,14 +643,17 @@ dialog::backdrop{
 </div>
 
 <div class="dialog-footer">
+
 <button class="btn" id="closeMenu">
 ዝጋ
 </button>
+
 </div>
 
 </div>
 
 </dialog>
+
 
 <script>
 
@@ -581,6 +717,7 @@ let currentTopicId=null;
 
 const $=id=>document.getElementById(id);
 
+
 function escapeHTML(value){
 
   return String(value ?? '')
@@ -592,11 +729,12 @@ function escapeHTML(value){
 
 }
 
+
 function getTitle(item){
 
   if(!item) return '';
 
-  const field=
+  const field =
     LANGUAGES[currentLanguage].title;
 
   return (
@@ -609,11 +747,12 @@ function getTitle(item){
 
 }
 
+
 function getSummary(item){
 
   if(!item) return '';
 
-  const field=
+  const field =
     LANGUAGES[currentLanguage].summary;
 
   return (
@@ -626,39 +765,111 @@ function getSummary(item){
 
 }
 
+
+/*
+   አስፈላጊ:
+   ይህ function ሙሉ content_* ይመልሳል።
+   አይቆርጥም።
+*/
+
 function getContent(item){
 
   if(!item) return '';
 
-  const field=
+  const field =
     LANGUAGES[currentLanguage].content;
 
-  return (
+  return String(
     item[field] ||
     item.content_am ||
     item.content_sid ||
     item.content_en ||
     ''
-  );
+  ).trim();
 
 }
+
+
+/*
+   Card ላይ ብቻ የሚታየው preview ነው።
+   ሙሉ content ሲከፈት አይጠቀምበትም።
+*/
 
 function getContentPreview(item){
 
-  if(!item) return '';
-
   const content =
-    String(getContent(item) || '').trim();
+    getContent(item);
 
-  if(content){
-    return content.length > 500
-      ? content.slice(0,500).trim() + '…'
-      : content;
+  if(!content){
+
+    return getSummary(item);
+
   }
 
-  return getSummary(item);
+  return content.length > 500
+    ? content.slice(0,500).trim() + '…'
+    : content;
 
 }
+
+
+/*
+   ሙሉ የጽሑፍ አንቀጽ ማሳያ።
+
+   Supabase ውስጥ content በ
+   አዲስ መስመር ከተከፈለ
+   እያንዳንዱ አንቀጽ <p> ይሆናል።
+
+   HTML ከcontent ውስጥ እንዳይገባ
+   escapeHTML በመጀመሪያ ይጠቀማል።
+*/
+
+function formatArticleContent(value){
+
+  const text =
+    String(value ?? '')
+      .replace(/\r\n/g,'\n')
+      .replace(/\r/g,'\n')
+      .trim();
+
+  if(!text){
+
+    return `
+      <p>
+        የዚህ ጽሑፍ ሙሉ ይዘት አልተገኘም።
+      </p>
+    `;
+
+  }
+
+  const safe =
+    escapeHTML(text);
+
+  const paragraphs =
+    safe
+      .split(/\n{2,}/)
+      .map(p=>p.trim())
+      .filter(Boolean);
+
+  if(!paragraphs.length){
+
+    return `<p>${safe.replace(/\n/g,'<br>')}</p>`;
+
+  }
+
+  return paragraphs
+    .map(p=>`
+
+      <p>
+        ${p.replace(/\n/g,'<br>')}
+      </p>
+
+    `)
+    .join('');
+
+}
+
+
 /* =========================================================
    LANGUAGE UI
    ========================================================= */
@@ -667,19 +878,20 @@ function renderLanguages(){
 
   const box=$('languages');
 
-  box.innerHTML=
+  box.innerHTML =
     Object.entries(LANGUAGES)
-    .map(([code,data])=>`
+      .map(([code,data])=>`
 
-      <button
-        class="language ${code===currentLanguage?'active':''}"
-        data-language="${code}"
-      >
-        ${escapeHTML(data.name)}
-      </button>
+        <button
+          class="language ${code===currentLanguage?'active':''}"
+          data-language="${code}"
+        >
+          ${escapeHTML(data.name)}
+        </button>
 
-    `)
-    .join('');
+      `)
+      .join('');
+
 
   document
     .querySelectorAll('[data-language]')
@@ -687,15 +899,19 @@ function renderLanguages(){
 
       button.onclick=()=>{
 
-        currentLanguage=
+        currentLanguage =
           button.dataset.language;
 
         renderLanguages();
 
         if(currentTopicId){
+
           openTopic(currentTopicId);
+
         }else{
+
           showHome();
+
         }
 
       };
@@ -712,33 +928,38 @@ function renderLanguages(){
 function rootTopics(){
 
   return topics.filter(
-    topic=>topic.parent_id===null ||
-           topic.parent_id===undefined ||
-           topic.parent_id==='' ||
-           topic.parent_id===0
+    topic =>
+      topic.parent_id===null ||
+      topic.parent_id===undefined ||
+      topic.parent_id==='' ||
+      topic.parent_id===0
   );
 
 }
 
+
 function childTopics(parentId){
 
   return topics.filter(
-    topic=>
-      String(topic.parent_id ?? '')===
+    topic =>
+      String(topic.parent_id ?? '') ===
       String(parentId)
   );
 
 }
 
+
 function topicArticles(topicId){
 
-  return articles.filter(article=>
+  return articles.filter(article =>
+
     String(
       article.topic_id ??
       article.category_id ??
       ''
-    )===
+    ) ===
     String(topicId)
+
   );
 
 }
@@ -752,7 +973,8 @@ function showHome(){
 
   currentTopicId=null;
 
-  const roots=rootTopics();
+  const roots =
+    rootTopics();
 
   $('view').innerHTML=`
 
@@ -772,7 +994,10 @@ function showHome(){
 
   `;
 
-  const grid=$('topicGrid');
+
+  const grid =
+    $('topicGrid');
+
 
   if(!roots.length){
 
@@ -788,7 +1013,8 @@ function showHome(){
 
   }
 
-  grid.innerHTML=
+
+  grid.innerHTML =
     roots
       .map(topic=>`
 
@@ -809,6 +1035,7 @@ function showHome(){
 
       `)
       .join('');
+
 
   document
     .querySelectorAll('#topicGrid [data-topic]')
@@ -835,10 +1062,13 @@ function openTopic(id){
 
   currentTopicId=id;
 
-  const topic=
+  const topic =
     topics.find(
-      item=>String(item.id)===String(id)
+      item =>
+        String(item.id) ===
+        String(id)
     );
+
 
   if(!topic){
 
@@ -848,11 +1078,14 @@ function openTopic(id){
 
   }
 
-  const children=
+
+  const children =
     childTopics(id);
 
-  const relatedArticles=
+
+  const relatedArticles =
     topicArticles(id);
+
 
   $('view').innerHTML=`
 
@@ -875,6 +1108,7 @@ function openTopic(id){
 
     </div>
 
+
     <div class="section-title">
 
       <h2>
@@ -883,10 +1117,12 @@ function openTopic(id){
 
     </div>
 
+
     <div
       class="grid"
       id="subtopicGrid"
     ></div>
+
 
     <div class="section-title">
 
@@ -896,6 +1132,7 @@ function openTopic(id){
 
     </div>
 
+
     <div
       class="grid"
       id="articleGrid"
@@ -903,33 +1140,38 @@ function openTopic(id){
 
   `;
 
-  $('backHome').onclick=showHome;
 
-  const subtopicGrid=
+  $('backHome').onclick =
+    showHome;
+
+
+  const subtopicGrid =
     $('subtopicGrid');
+
 
   if(children.length){
 
-    subtopicGrid.innerHTML=
-      children.map(child=>`
+    subtopicGrid.innerHTML =
+      children
+        .map(child=>`
 
-        <button
-          class="card"
-          data-subtopic="${escapeHTML(child.id)}"
-        >
+          <button
+            class="card"
+            data-subtopic="${escapeHTML(child.id)}"
+          >
 
-          <h3>
-            ${escapeHTML(getTitle(child))}
-          </h3>
+            <h3>
+              ${escapeHTML(getTitle(child))}
+            </h3>
 
-          <p>
-            ${escapeHTML(getSummary(child))}
-          </p>
+            <p>
+              ${escapeHTML(getSummary(child))}
+            </p>
 
-        </button>
+          </button>
 
-      `)
-      .join('');
+        `)
+        .join('');
 
   }else{
 
@@ -942,6 +1184,7 @@ function openTopic(id){
     `;
 
   }
+
 
   document
     .querySelectorAll('[data-subtopic]')
@@ -958,12 +1201,13 @@ function openTopic(id){
     });
 
 
-  const articleGrid=
+  const articleGrid =
     $('articleGrid');
+
 
   if(relatedArticles.length){
 
-    articleGrid.innerHTML=
+    articleGrid.innerHTML =
       relatedArticles
         .map(article=>`
 
@@ -977,7 +1221,9 @@ function openTopic(id){
             </h3>
 
             <p>
-              ${escapeHTML(getContentPreview(article))}
+              ${escapeHTML(
+                getContentPreview(article)
+              )}
             </p>
 
           </button>
@@ -997,6 +1243,7 @@ function openTopic(id){
 
   }
 
+
   document
     .querySelectorAll('[data-article]')
     .forEach(button=>{
@@ -1015,17 +1262,41 @@ function openTopic(id){
 
 
 /* =========================================================
-   ARTICLE PAGE
+   ARTICLE READER
    ========================================================= */
 
 function openArticle(id){
 
-  const article=
+  const article =
     articles.find(
-      item=>String(item.id)===String(id)
+      item =>
+        String(item.id) ===
+        String(id)
     );
 
+
   if(!article) return;
+
+
+  const title =
+    getTitle(article);
+
+
+  const summary =
+    getSummary(article);
+
+
+  /*
+     ይህ ነው ዋናው ማስተካከያ።
+
+     ከsummary ወይም preview ሳይሆን
+     በቀጥታ content_* ሙሉ ይዘት
+     ይወሰዳል።
+  */
+
+  const fullContent =
+    getContent(article);
+
 
   $('view').innerHTML=`
 
@@ -1036,25 +1307,112 @@ function openArticle(id){
       ← ተመለስ
     </button>
 
+
     <article class="article">
 
       <h1>
-        ${escapeHTML(getTitle(article))}
+        ${escapeHTML(title)}
       </h1>
 
-      <div class="article-summary">
-        ${escapeHTML(getSummary(article))}
+
+      <div class="reader-info">
+
+        <span class="reader-badge">
+          📖 ሙሉ ጽሑፍ
+        </span>
+
+        <span class="reader-badge">
+          ${escapeHTML(
+            LANGUAGES[currentLanguage].name
+          )}
+        </span>
+
       </div>
 
-      <hr>
+
+      ${
+        summary
+        ? `
+          <div class="article-summary">
+            ${escapeHTML(summary)}
+          </div>
+        `
+        : ''
+      }
+
 
       <div class="article-content">
-        ${escapeHTML(getContent(article))}
+
+        ${formatArticleContent(fullContent)}
+
       </div>
 
-      <hr>
 
-      <div style="margin-top:15px">
+      ${
+        article.source_method ||
+        article.factual_reviewed ||
+        article.copyright_reviewed
+        ? `
+
+          <div class="article-sources">
+
+            <h3>
+              📚 የይዘት ማረጋገጫ
+            </h3>
+
+            ${
+              article.source_method
+              ? `
+                <p>
+                  <strong>Source method:</strong>
+                  ${escapeHTML(
+                    article.source_method
+                  )}
+                </p>
+              `
+              : ''
+            }
+
+            ${
+              article.factual_reviewed !== null &&
+              article.factual_reviewed !== undefined
+              ? `
+                <p>
+                  <strong>Factual review:</strong>
+                  ${
+                    article.factual_reviewed
+                    ? '✓ ተገምግሟል'
+                    : '— ገና አልተረጋገጠም'
+                  }
+                </p>
+              `
+              : ''
+            }
+
+            ${
+              article.copyright_reviewed !== null &&
+              article.copyright_reviewed !== undefined
+              ? `
+                <p>
+                  <strong>Copyright review:</strong>
+                  ${
+                    article.copyright_reviewed
+                    ? '✓ ተገምግሟል'
+                    : '— ገና አልተረጋገጠም'
+                  }
+                </p>
+              `
+              : ''
+            }
+
+          </div>
+
+        `
+        : ''
+      }
+
+
+      <div class="article-tools">
 
         <button
           class="btn"
@@ -1063,6 +1421,7 @@ function openArticle(id){
           📋 ቅዳ
         </button>
 
+
         <button
           class="btn"
           id="shareArticle"
@@ -1070,11 +1429,47 @@ function openArticle(id){
           📤 አጋራ
         </button>
 
+
+        ${
+          article.audio_am_url ||
+          article.audio_sid_url ||
+          article.audio_en_url
+          ? `
+            <button
+              class="btn"
+              id="audioArticle"
+            >
+              🔊 አዳምጥ
+            </button>
+          `
+          : ''
+        }
+
       </div>
+
+
+      ${
+        article.audio_am_url ||
+        article.audio_sid_url ||
+        article.audio_en_url
+        ? `
+          <audio
+            id="articleAudio"
+            controls
+            style="
+              width:100%;
+              margin-top:15px;
+              display:none;
+            "
+          ></audio>
+        `
+        : ''
+      }
 
     </article>
 
   `;
+
 
   $('backTopic').onclick=()=>{
 
@@ -1091,69 +1486,158 @@ function openArticle(id){
   };
 
 
-  $('copyArticle').onclick=async()=>{
+  /*
+     COPY
+  */
 
-    const text=
-      getTitle(article)+
-      '\n\n'+
-      getContent(article);
+  $('copyArticle').onclick =
+    async()=>{
 
-    try{
-
-      await navigator.clipboard.writeText(text);
-
-      $('copyArticle').textContent=
-        '✓ ተቀድቷል';
-
-      setTimeout(()=>{
-
-        $('copyArticle').textContent=
-          '📋 ቅዳ';
-
-      },1500);
-
-    }catch(e){
-
-      alert('መቅዳት አልተቻለም።');
-
-    }
-
-  };
-
-
-  $('shareArticle').onclick=async()=>{
-
-    const text=getTitle(article);
-
-    if(
-      navigator.share
-    ){
+      const text =
+        title +
+        '\n\n' +
+        fullContent;
 
       try{
 
-        await navigator.share({
-          title:text,
-          text:text,
-          url:location.href
-        });
+        await navigator.clipboard
+          .writeText(text);
 
-      }catch(e){}
+        $('copyArticle').textContent =
+          '✓ ተቀድቷል';
 
-    }else{
+        setTimeout(()=>{
 
-      try{
+          $('copyArticle').textContent =
+            '📋 ቅዳ';
 
-        await navigator.clipboard.writeText(
-          location.href
+        },1500);
+
+      }catch(e){
+
+        alert(
+          'መቅዳት አልተቻለም።'
         );
 
-        alert('የገጹ አድራሻ ተቀድቷል።');
+      }
 
-      }catch(e){}
+    };
 
-    }
 
-  };
+  /*
+     SHARE
+  */
+
+  $('shareArticle').onclick =
+    async()=>{
+
+      if(navigator.share){
+
+        try{
+
+          await navigator.share({
+
+            title:title,
+
+            text:
+              title +
+              '\n\n' +
+              fullContent,
+
+            url:location.href
+
+          });
+
+        }catch(e){}
+
+      }else{
+
+        try{
+
+          await navigator.clipboard
+            .writeText(
+              location.href
+            );
+
+          alert(
+            'የገጹ አድራሻ ተቀድቷል።'
+          );
+
+        }catch(e){}
+
+      }
+
+    };
+
+
+  /*
+     AUDIO
+  */
+
+  const audioButton =
+    $('audioArticle');
+
+  const audioControl =
+    $('articleAudio');
+
+
+  if(audioButton && audioControl){
+
+    audioButton.onclick=()=>{
+
+      let audioUrl='';
+
+
+      if(currentLanguage==='am'){
+
+        audioUrl =
+          article.audio_am_url ||
+          article.audio_sid_url ||
+          article.audio_en_url ||
+          '';
+
+      }else if(currentLanguage==='sid'){
+
+        audioUrl =
+          article.audio_sid_url ||
+          article.audio_am_url ||
+          article.audio_en_url ||
+          '';
+
+      }else{
+
+        audioUrl =
+          article.audio_en_url ||
+          article.audio_am_url ||
+          article.audio_sid_url ||
+          '';
+
+      }
+
+
+      if(!audioUrl){
+
+        alert(
+          'ለዚህ ጽሑፍ የድምጽ ፋይል አልተገኘም።'
+        );
+
+        return;
+
+      }
+
+
+      audioControl.src =
+        audioUrl;
+
+      audioControl.style.display =
+        'block';
+
+      audioControl.play()
+        .catch(()=>{});
+
+    };
+
+  }
 
 }
 
@@ -1164,11 +1648,12 @@ function openArticle(id){
 
 function performSearch(){
 
-  const query=
+  const query =
     $('searchInput')
       .value
       .trim()
       .toLowerCase();
+
 
   if(!query){
 
@@ -1178,7 +1663,8 @@ function performSearch(){
 
   }
 
-  const results=
+
+  const results =
     articles.filter(article=>{
 
       const fields=[
@@ -1197,10 +1683,13 @@ function performSearch(){
 
       ];
 
+
       return fields.some(value=>
+
         String(value ?? '')
           .toLowerCase()
           .includes(query)
+
       );
 
     });
@@ -1220,6 +1709,7 @@ function performSearch(){
 
     </div>
 
+
     <div
       class="grid"
       id="searchResults"
@@ -1227,7 +1717,10 @@ function performSearch(){
 
   `;
 
-  const box=$('searchResults');
+
+  const box =
+    $('searchResults');
+
 
   if(!results.length){
 
@@ -1245,7 +1738,8 @@ function performSearch(){
 
   }
 
-  box.innerHTML=
+
+  box.innerHTML =
     results
       .map(article=>`
 
@@ -1259,13 +1753,16 @@ function performSearch(){
           </h3>
 
           <p>
-            ${escapeHTML(getSummary(article))}
+            ${escapeHTML(
+              getSummary(article)
+            )}
           </p>
 
         </button>
 
       `)
       .join('');
+
 
   document
     .querySelectorAll('[data-result]')
@@ -1290,7 +1787,9 @@ function performSearch(){
 
 function showPanel(type){
 
-  const dialog=$('menuDialog');
+  const dialog =
+    $('menuDialog');
+
 
   const panels={
 
@@ -1298,7 +1797,9 @@ function showPanel(type){
 
       <h2>⚙️ ቅንብሮች</h2>
 
-      <p>የመልክ ቅንብሮች</p>
+      <p>
+        የመልክ ቅንብሮች
+      </p>
 
       <button
         class="btn"
@@ -1323,6 +1824,7 @@ function showPanel(type){
 
     `,
 
+
     stats:`
 
       <h2>📊 ስታቲስቲክስ</h2>
@@ -1330,41 +1832,63 @@ function showPanel(type){
       <div class="stat-grid">
 
         <div class="stat">
-          <strong>${rootTopics().length}</strong>
+
+          <strong>
+            ${rootTopics().length}
+          </strong>
+
           ዋና ምድቦች
+
         </div>
 
+
         <div class="stat">
-          <strong>${topics.length}</strong>
+
+          <strong>
+            ${topics.length}
+          </strong>
+
           Topics
+
         </div>
 
+
         <div class="stat">
-          <strong>${articles.length}</strong>
+
+          <strong>
+            ${articles.length}
+          </strong>
+
           የታተሙ Articles
+
         </div>
 
       </div>
 
     `,
 
+
     feedback:`
 
-      <h2>💬 አስተያየት / ሪፖርት</h2>
+      <h2>
+        💬 አስተያየት / ሪፖርት
+      </h2>
 
       <p>
-        ስህተት፣ የጎደለ መረጃ ወይም ማሻሻያ
-        ለማሳወቅ በኢሜይል ያግኙን።
+        ስህተት፣ የጎደለ መረጃ ወይም
+        ማሻሻያ ለማሳወቅ
+        በኢሜይል ያግኙን።
       </p>
 
       <a
         class="btn primary"
-        href="mailto:ezrasamuel2ezrasamuel2721@gmail.com"
+        href="mailto:ezrasamuel2721@gmail.com"
       >
         📩 ኢሜይል ላክ
       </a>
 
     `,
+
 
     contact:`
 
@@ -1372,7 +1896,7 @@ function showPanel(type){
 
       <p>
         <strong>ኢሜይል:</strong><br>
-        ezrasamuel2ezrasamuel2721@gmail.com
+        ezrasamuel2721@gmail.com
       </p>
 
       <p>
@@ -1382,18 +1906,20 @@ function showPanel(type){
 
     `,
 
+
     about:`
 
-      <h2>ℹ️ ስለ ሲዳማን እንወቅ</h2>
+      <h2>
+        ℹ️ ስለ ሲዳማን እንወቅ
+      </h2>
 
       <p>
-        <strong>
-        ሲዳማን እንወቅ
-        </strong>
+        <strong>ሲዳማን እንወቅ</strong>
         የሲዳማን ማንነት፣ ታሪክ፣
         ባህል፣ ቋንቋ፣ ማኅበራዊ ሕይወት
         እና ተያያዥ ዕውቀት በዲጂታል
-        መድረክ ለማቅረብ የተዘጋጀ ፕሮጀክት ነው።
+        መድረክ ለማቅረብ የተዘጋጀ
+        ፕሮጀክት ነው።
       </p>
 
       <h3>ዓላማችን</h3>
@@ -1413,9 +1939,12 @@ function showPanel(type){
 
     `,
 
+
     sources:`
 
-      <h2>📚 የመረጃ ምንጮች</h2>
+      <h2>
+        📚 የመረጃ ምንጮች
+      </h2>
 
       <p>
         የእያንዳንዱ ይዘት ምንጭ
@@ -1424,6 +1953,7 @@ function showPanel(type){
       </p>
 
     `,
+
 
     admin:`
 
@@ -1434,7 +1964,8 @@ function showPanel(type){
         ማስተካከል፣ ማጥፋት፣
         ምድቦች፣ ምስሎች፣ ቦታዎች
         እና Supabase አስተዳደር
-        የሚያገለግል የአስተዳደር ክፍል ነው።
+        የሚያገለግል የአስተዳደር
+        ክፍል ነው።
       </p>
 
       <p>
@@ -1446,9 +1977,12 @@ function showPanel(type){
 
     `,
 
+
     privacy:`
 
-      <h2>📄 የአጠቃቀም ደንብ / Privacy</h2>
+      <h2>
+        📄 የአጠቃቀም ደንብ / Privacy
+      </h2>
 
       <p>
         ይህ ክፍል የተጠቃሚ ግላዊነት፣
@@ -1461,24 +1995,33 @@ function showPanel(type){
 
   };
 
-  const content=panels[type];
+
+  const content =
+    panels[type];
+
 
   if(!content) return;
 
-  dialog.querySelector('.dialog-body').innerHTML=`
 
-    ${content}
+  dialog
+    .querySelector('.dialog-body')
+    .innerHTML=`
 
-    <div class="dialog-footer">
-      <button
-        class="btn"
-        id="closePanel"
-      >
-        ዝጋ
-      </button>
-    </div>
+      ${content}
 
-  `;
+      <div class="dialog-footer">
+
+        <button
+          class="btn"
+          id="closePanel"
+        >
+          ዝጋ
+        </button>
+
+      </div>
+
+    `;
+
 
   $('closePanel').onclick=()=>{
 
@@ -1491,7 +2034,9 @@ function showPanel(type){
 
     $('lightMode').onclick=()=>{
 
-      document.body.classList.remove('dark');
+      document.body
+        .classList
+        .remove('dark');
 
       localStorage.setItem(
         'sidaaman-theme',
@@ -1500,9 +2045,12 @@ function showPanel(type){
 
     };
 
+
     $('darkMode').onclick=()=>{
 
-      document.body.classList.add('dark');
+      document.body
+        .classList
+        .add('dark');
 
       localStorage.setItem(
         'sidaaman-theme',
@@ -1511,9 +2059,12 @@ function showPanel(type){
 
     };
 
+
     $('defaultMode').onclick=()=>{
 
-      document.body.classList.remove('dark');
+      document.body
+        .classList
+        .remove('dark');
 
       localStorage.removeItem(
         'sidaaman-theme'
@@ -1537,6 +2088,7 @@ $('menuBtn').onclick=()=>{
 
 };
 
+
 $('closeMenu').onclick=()=>{
 
   $('menuDialog')
@@ -1544,24 +2096,29 @@ $('closeMenu').onclick=()=>{
 
 };
 
+
 document
   .querySelectorAll('[data-menu]')
   .forEach(button=>{
 
     button.onclick=()=>{
 
-      const type=
+      const type =
         button.dataset.menu;
+
 
       if(type==='search'){
 
-        $('menuDialog').close();
+        $('menuDialog')
+          .close();
 
-        $('searchInput').focus();
+        $('searchInput')
+          .focus();
 
         return;
 
       }
+
 
       showPanel(type);
 
@@ -1574,10 +2131,13 @@ document
    HOME / SEARCH EVENTS
    ========================================================= */
 
-$('homeBtn').onclick=showHome;
+$('homeBtn').onclick =
+  showHome;
 
-$('searchBtn').onclick=
+
+$('searchBtn').onclick =
   performSearch;
+
 
 $('searchInput')
   .addEventListener(
@@ -1605,13 +2165,14 @@ async function loadData(){
     const [
       topicsResult,
       articlesResult
-    ]=await Promise.all([
+    ] = await Promise.all([
 
       db
         .from('sidama_topics')
         .select('*')
         .eq('is_active',true)
         .order('sort_order'),
+
 
       db
         .from('sidama_articles')
@@ -1641,16 +2202,27 @@ async function loadData(){
     }
 
 
-    topics=
+    topics =
       topicsResult.data || [];
 
-    articles=
+
+    articles =
       articlesResult.data || [];
+
+
+    console.log(
+      'SIDAAMAN ENWEQ:',
+      topics.length,
+      'topics /',
+      articles.length,
+      'published articles'
+    );
 
 
     renderLanguages();
 
     showHome();
+
 
   }catch(error){
 
@@ -1658,6 +2230,7 @@ async function loadData(){
       'SIDAAMAN ENWEQ ERROR:',
       error
     );
+
 
     $('view').innerHTML=`
 
@@ -1670,7 +2243,8 @@ async function loadData(){
         <br><br>
 
         Supabase ግንኙነት ወይም
-        የመረጃ ጠያቂው ላይ ችግር ተፈጥሯል።
+        የመረጃ ጠያቂው ላይ
+        ችግር ተፈጥሯል።
 
         <br><br>
 
@@ -1697,10 +2271,12 @@ async function loadData(){
 if(
   localStorage.getItem(
     'sidaaman-theme'
-  )==='dark'
+  ) === 'dark'
 ){
 
-  document.body.classList.add('dark');
+  document.body
+    .classList
+    .add('dark');
 
 }
 

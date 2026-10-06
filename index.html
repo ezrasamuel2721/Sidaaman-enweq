@@ -2424,6 +2424,9 @@ db
     'published',
     'reviewed'
   ])
+  .order('created_at', {
+    ascending: true
+  })
         .order(
           'sort_order',
           {

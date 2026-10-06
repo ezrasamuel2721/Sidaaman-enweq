@@ -2407,25 +2407,25 @@ async function load(){
 
     const [
       topicsResult,
-      articlesResult
-    ] = await Promise.all([
+articlesResult
+] = await Promise.all([
+
+  db
+    .from('topics')
+    .select('*')
+  
+      .eq(
+        'is_published', true)
+    )
+    .order(
+      'sort_order',
+      {
+        ascending:true
+      }
+    ),
 
       db
-        .from('sidama_topics')
-        .select('*')
-        .eq(
-          'is_active',
-          true
-        )
-        .order(
-          'sort_order',
-          {
-            ascending:true
-          }
-        ),
-
-      db
-        .from('sidama_articles')
+        .from('articles')
         .select('*')
         .eq(
           'editorial_status',

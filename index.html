@@ -2406,31 +2406,24 @@ async function load(){
   try{
 
     const [
-      topicsResult,
+topicsResult,
 articlesResult
 ] = await Promise.all([
 
   db
     .from('topics')
     .select('*')
-  
-      .eq(
-        'is_published', true)
-    )
-    .order(
-      'sort_order',
-      {
-        ascending:true
-      }
-    ),
-
-      db
-        .from('articles')
-        .select('*')
-        .eq(
-          'editorial_status',
-          'published'
-        )
+    .eq('is_published', true)
+    .order('sort_order', {
+      ascending: true
+    }),
+db
+  .from('articles')
+  .select('*')
+  .in('editorial_status', [
+    'published',
+    'reviewed'
+  ])
         .order(
           'sort_order',
           {

@@ -652,8 +652,7 @@ dialog::backdrop{
    ========================================================= */
 
 const SUPABASE_URL =
-  'https://geznekrpdubpgsegseer.supabase.co';
-
+  'https://euabsgdefzvypcdbjwax.supabase.co';
 const SUPABASE_KEY =
   'sb_publishable_v6cciBIeO_Gr3q3ZHto2vQ_wQp9vl6e';
 
@@ -751,12 +750,15 @@ function getSummary(item){
     LANGUAGES[currentLanguage].summary;
 
   return (
-    item[field] ||
-    item.summary_am ||
-    item.summary_sid ||
-    item.summary_en ||
-    ''
-  );
+  item[field] ||
+  item.summary_am ||
+  item.summary_sid ||
+  item.summary_en ||
+  item.description_am ||
+  item.description_sid ||
+  item.description_en ||
+  ''
+);
 
 }
 
@@ -2380,7 +2382,7 @@ async function fetchAllArticles(){
 
     const result =
       await db
-        .from('sidama_articles')
+        .from('articles')
         .select('*')
         .eq(
           'editorial_status',
@@ -2449,7 +2451,7 @@ async function fetchAllTopics(){
 
     const result =
       await db
-        .from('sidama_topics')
+        .from('topics')
         .select('*')
         .eq(
           'is_active',

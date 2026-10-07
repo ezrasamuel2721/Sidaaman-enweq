@@ -31,8 +31,7 @@ body{
   line-height:1.8;
 }
 
-button,
-input{
+button,input{
   font:inherit;
 }
 
@@ -246,11 +245,6 @@ main{
   overflow-wrap:anywhere;
 }
 
-/*
-   አስፈላጊ:
-   Supabase content_* ውስጥ ያሉ አንቀጾች
-   በእውነት እንዲለዩ ይረዳል።
-*/
 .article-content p{
   margin:0 0 22px;
 }
@@ -305,9 +299,13 @@ main{
 }
 
 .article-sources p{
-  margin:0;
+  margin:0 0 8px;
   white-space:pre-wrap;
   line-height:1.8;
+}
+
+.article-sources p:last-child{
+  margin-bottom:0;
 }
 
 .reader-info{
@@ -524,7 +522,6 @@ dialog::backdrop{
   </div>
 </header>
 
-
 <main>
 
 <section class="hero">
@@ -546,17 +543,13 @@ dialog::backdrop{
       placeholder="በርዕስ፣ ንዑስ ርዕስ፣ ሰው ስም፣ ቦታ ወይም ቁልፍ ቃል ይፈልጉ..."
     >
 
-    <button
-      class="btn primary"
-      id="searchBtn"
-    >
+    <button class="btn primary" id="searchBtn">
       🔎 ፈልግ
     </button>
 
   </div>
 
 </section>
-
 
 <div id="view">
 
@@ -567,7 +560,6 @@ dialog::backdrop{
 </div>
 
 </main>
-
 
 <footer>
 
@@ -594,7 +586,6 @@ dialog::backdrop{
   </div>
 
 </footer>
-
 
 <dialog id="menuDialog">
 
@@ -654,7 +645,6 @@ dialog::backdrop{
 
 </dialog>
 
-
 <script>
 
 /* =========================================================
@@ -667,11 +657,10 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   'sb_publishable_v6cciBIeO_Gr3q3ZHto2vQ_wQp9vl6e';
 
-const db =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
 /* =========================================================
@@ -703,7 +692,13 @@ const LANGUAGES = {
 
 };
 
-let currentLanguage='am';
+
+let currentLanguage =
+  localStorage.getItem('sidaaman_lang') || 'am';
+
+if(!LANGUAGES[currentLanguage]){
+  currentLanguage='am';
+}
 
 let topics=[];
 let articles=[];
@@ -715,7 +710,7 @@ let currentTopicId=null;
    HELPERS
    ========================================================= */
 
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
 
 function escapeHTML(value){
@@ -767,9 +762,8 @@ function getSummary(item){
 
 
 /*
-   አስፈላጊ:
-   ይህ function ሙሉ content_* ይመልሳል።
-   አይቆርጥም።
+   ሙሉ Body / content እዚህ ይመጣል።
+   አይቆረጥም።
 */
 
 function getContent(item){
@@ -791,8 +785,8 @@ function getContent(item){
 
 
 /*
-   Card ላይ ብቻ የሚታየው preview ነው።
-   ሙሉ content ሲከፈት አይጠቀምበትም።
+   Card ላይ ብቻ preview ነው።
+   Article ሲከፈት getContent() ሙሉውን ያነባል።
 */
 
 function getContentPreview(item){
@@ -801,9 +795,7 @@ function getContentPreview(item){
     getContent(item);
 
   if(!content){
-
     return getSummary(item);
-
   }
 
   return content.length > 500
@@ -814,14 +806,8 @@ function getContentPreview(item){
 
 
 /*
-   ሙሉ የጽሑፍ አንቀጽ ማሳያ።
-
-   Supabase ውስጥ content በ
-   አዲስ መስመር ከተከፈለ
-   እያንዳንዱ አንቀጽ <p> ይሆናል።
-
-   HTML ከcontent ውስጥ እንዳይገባ
-   escapeHTML በመጀመሪያ ይጠቀማል።
+   Supabase content ውስጥ ያለውን
+   ሙሉ ጽሑፍ ወደ አንቀጾች ይከፍላል።
 */
 
 function formatArticleContent(value){
@@ -859,11 +845,7 @@ function formatArticleContent(value){
 
   return paragraphs
     .map(p=>`
-
-      <p>
-        ${p.replace(/\n/g,'<br>')}
-      </p>
-
+      <p>${p.replace(/\n/g,'<br>')}</p>
     `)
     .join('');
 
@@ -902,6 +884,11 @@ function renderLanguages(){
         currentLanguage =
           button.dataset.language;
 
+        localStorage.setItem(
+          'sidaaman_lang',
+          currentLanguage
+        );
+
         renderLanguages();
 
         if(currentTopicId){
@@ -922,45 +909,152 @@ function renderLanguages(){
 
 
 /* =========================================================
-   TOPIC HELPERS
+   TOPIC TREE
    ========================================================= */
 
 function rootTopics(){
 
-  return topics.filter(
-    topic =>
-      topic.parent_id===null ||
-      topic.parent_id===undefined ||
-      topic.parent_id==='' ||
-      topic.parent_id===0
-  );
+  return topics.filter(topic=>{
+
+    const parent =
+      topic.parent_id;
+
+    return (
+      parent===null ||
+      parent===undefined ||
+      parent==='' ||
+      parent===0 ||
+      String(parent)==='0'
+    );
+
+  });
 
 }
 
 
 function childTopics(parentId){
 
-  return topics.filter(
-    topic =>
-      String(topic.parent_id ?? '') ===
-      String(parentId)
-  );
+  return topics.filter(topic=>{
+
+    if(
+      topic.parent_id===null ||
+      topic.parent_id===undefined
+    ){
+      return false;
+    }
+
+    return String(topic.parent_id) ===
+           String(parentId);
+
+  });
 
 }
 
 
+/*
+   ይህ function የአንድ topic
+   ሁሉንም ዘሮች ያገኛል።
+
+   Root
+     └── Child
+          └── Grandchild
+               └── Article
+
+   እንኳን article በGrandchild ላይ
+   ቢኖር Root ላይ ይታያል።
+*/
+
+function getDescendantTopicIds(topicId){
+
+  const ids = new Set([
+    String(topicId)
+  ]);
+
+  let changed=true;
+
+  while(changed){
+
+    changed=false;
+
+    topics.forEach(topic=>{
+
+      const parent =
+        topic.parent_id;
+
+      if(
+        parent!==null &&
+        parent!==undefined &&
+        ids.has(String(parent))
+      ){
+
+        const id =
+          String(topic.id);
+
+        if(!ids.has(id)){
+
+          ids.add(id);
+          changed=true;
+
+        }
+
+      }
+
+    });
+
+  }
+
+  return Array.from(ids);
+
+}
+
+
+/*
+   የtopic ውስጥ ያሉ articles
+   እና በማንኛውም descendant topic
+   ላይ ያሉ articles ይመልሳል።
+*/
+
 function topicArticles(topicId){
 
-  return articles.filter(article =>
+  const ids =
+    new Set(
+      getDescendantTopicIds(topicId)
+    );
 
-    String(
+  return articles.filter(article=>{
+
+    const articleTopic =
       article.topic_id ??
       article.category_id ??
-      ''
-    ) ===
-    String(topicId)
+      article.topicId ??
+      article.categoryId ??
+      '';
 
-  );
+    return ids.has(
+      String(articleTopic)
+    );
+
+  });
+
+}
+
+
+/*
+   Direct child + descendant articles
+   ለCard statistics
+*/
+
+function topicStats(topicId){
+
+  return {
+
+    subtopics:
+      childTopics(topicId).length,
+
+    articles:
+      topicArticles(topicId).length
+
+  };
 
 }
 
@@ -1016,24 +1110,44 @@ function showHome(){
 
   grid.innerHTML =
     roots
-      .map(topic=>`
+      .map(topic=>{
 
-        <button
-          class="card"
-          data-topic="${escapeHTML(topic.id)}"
-        >
+        const stats =
+          topicStats(topic.id);
 
-          <h3>
-            ${escapeHTML(getTitle(topic))}
-          </h3>
+        return `
 
-          <p>
-            ${escapeHTML(getSummary(topic))}
-          </p>
+          <button
+            class="card"
+            data-topic="${escapeHTML(topic.id)}"
+          >
 
-        </button>
+            <h3>
+              ${escapeHTML(getTitle(topic))}
+            </h3>
 
-      `)
+            <p>
+              ${escapeHTML(getSummary(topic))}
+            </p>
+
+            <p
+              style="
+                margin-top:12px;
+                font-size:.85rem;
+                color:var(--primary);
+                font-weight:700;
+              "
+            >
+              ${stats.subtopics} ንዑስ ርዕሶች
+              ·
+              ${stats.articles} ጽሑፎች
+            </p>
+
+          </button>
+
+        `;
+
+      })
       .join('');
 
 
@@ -1087,14 +1201,26 @@ function openTopic(id){
     topicArticles(id);
 
 
+  const stats =
+    topicStats(id);
+
+
+  const hasParent =
+    topic.parent_id!==null &&
+    topic.parent_id!==undefined &&
+    topic.parent_id!=='' &&
+    String(topic.parent_id)!=='0';
+
+
   $('view').innerHTML=`
 
     <button
       class="btn back"
-      id="backHome"
+      id="backTopic"
     >
-      ← መነሻ
+      ← ${hasParent ? 'ተመለስ' : 'መነሻ'}
     </button>
+
 
     <div class="panel">
 
@@ -1102,26 +1228,51 @@ function openTopic(id){
         ${escapeHTML(getTitle(topic))}
       </h2>
 
-      <p class="meta">
-        ${escapeHTML(getSummary(topic))}
-      </p>
+      ${
+        getSummary(topic)
+        ? `
+          <p class="meta">
+            ${escapeHTML(getSummary(topic))}
+          </p>
+        `
+        : ''
+      }
+
+      <div class="reader-info">
+
+        <span class="reader-badge">
+          📂 ${stats.subtopics} ንዑስ ርዕሶች
+        </span>
+
+        <span class="reader-badge">
+          📖 ${stats.articles} ጽሑፎች
+        </span>
+
+      </div>
 
     </div>
 
 
-    <div class="section-title">
+    ${
+      children.length
+      ? `
 
-      <h2>
-        📂 ንዑስ ርዕሶች
-      </h2>
+        <div class="section-title">
 
-    </div>
+          <h2>
+            📂 ንዑስ ርዕሶች
+          </h2>
 
+        </div>
 
-    <div
-      class="grid"
-      id="subtopicGrid"
-    ></div>
+        <div
+          class="grid"
+          id="subtopicGrid"
+        ></div>
+
+      `
+      : ''
+    }
 
 
     <div class="section-title">
@@ -1129,6 +1280,10 @@ function openTopic(id){
       <h2>
         📖 የይዘት ንባብ
       </h2>
+
+      <span class="meta">
+        ${relatedArticles.length} ጽሑፎች
+      </span>
 
     </div>
 
@@ -1141,65 +1296,95 @@ function openTopic(id){
   `;
 
 
-  $('backHome').onclick =
-    showHome;
+  $('backTopic').onclick=()=>{
+
+    if(hasParent){
+
+      openTopic(topic.parent_id);
+
+    }else{
+
+      showHome();
+
+    }
+
+  };
 
 
-  const subtopicGrid =
-    $('subtopicGrid');
-
+  /*
+     SUBTOPICS
+  */
 
   if(children.length){
 
+    const subtopicGrid =
+      $('subtopicGrid');
+
     subtopicGrid.innerHTML =
       children
-        .map(child=>`
+        .map(child=>{
 
-          <button
-            class="card"
-            data-subtopic="${escapeHTML(child.id)}"
-          >
+          const childStats =
+            topicStats(child.id);
 
-            <h3>
-              ${escapeHTML(getTitle(child))}
-            </h3>
+          return `
 
-            <p>
-              ${escapeHTML(getSummary(child))}
-            </p>
+            <button
+              class="card"
+              data-subtopic="${escapeHTML(child.id)}"
+            >
 
-          </button>
+              <h3>
+                ${escapeHTML(getTitle(child))}
+              </h3>
 
-        `)
+              <p>
+                ${escapeHTML(getSummary(child))}
+              </p>
+
+              <p
+                style="
+                  margin-top:12px;
+                  font-size:.85rem;
+                  color:var(--primary);
+                  font-weight:700;
+                "
+              >
+                ${childStats.subtopics}
+                ንዑስ ርዕሶች
+                ·
+                ${childStats.articles}
+                ጽሑፎች
+              </p>
+
+            </button>
+
+          `;
+
+        })
         .join('');
 
-  }else{
 
-    subtopicGrid.innerHTML=`
+    document
+      .querySelectorAll('[data-subtopic]')
+      .forEach(button=>{
 
-      <div class="notice">
-        ንዑስ ርዕስ አልተገኘም።
-      </div>
+        button.onclick=()=>{
 
-    `;
+          openTopic(
+            button.dataset.subtopic
+          );
+
+        };
+
+      });
 
   }
 
 
-  document
-    .querySelectorAll('[data-subtopic]')
-    .forEach(button=>{
-
-      button.onclick=()=>{
-
-        openTopic(
-          button.dataset.subtopic
-        );
-
-      };
-
-    });
-
+  /*
+     ARTICLES
+  */
 
   const articleGrid =
     $('articleGrid');
@@ -1226,6 +1411,17 @@ function openTopic(id){
               )}
             </p>
 
+            <p
+              style="
+                margin-top:12px;
+                color:var(--primary);
+                font-size:.85rem;
+                font-weight:700;
+              "
+            >
+              📖 ሙሉ ጽሑፍ አንብብ →
+            </p>
+
           </button>
 
         `)
@@ -1236,7 +1432,10 @@ function openTopic(id){
     articleGrid.innerHTML=`
 
       <div class="notice">
-        በዚህ ምድብ ላይ የታተመ ይዘት አልተገኘም።
+
+        በዚህ ምድብ ወይም በንዑስ ርዕሶቹ
+        ላይ የታተመ ጽሑፍ አልተገኘም።
+
       </div>
 
     `;
@@ -1281,17 +1480,13 @@ function openArticle(id){
   const title =
     getTitle(article);
 
-
   const summary =
     getSummary(article);
 
-
   /*
-     ይህ ነው ዋናው ማስተካከያ።
-
-     ከsummary ወይም preview ሳይሆን
-     በቀጥታ content_* ሙሉ ይዘት
-     ይወሰዳል።
+     ዋናው BODY:
+     content_am / content_sid / content_en
+     ሙሉ በሙሉ ይነበባል።
   */
 
   const fullContent =
@@ -1302,7 +1497,7 @@ function openArticle(id){
 
     <button
       class="btn back"
-      id="backTopic"
+      id="backArticle"
     >
       ← ተመለስ
     </button>
@@ -1350,14 +1545,16 @@ function openArticle(id){
 
       ${
         article.source_method ||
-        article.factual_reviewed ||
-        article.copyright_reviewed
+        article.source ||
+        article.sources ||
+        article.factual_reviewed !== null ||
+        article.copyright_reviewed !== null
         ? `
 
           <div class="article-sources">
 
             <h3>
-              📚 የይዘት ማረጋገጫ
+              📚 የይዘት ምንጭና ማረጋገጫ
             </h3>
 
             ${
@@ -1367,6 +1564,32 @@ function openArticle(id){
                   <strong>Source method:</strong>
                   ${escapeHTML(
                     article.source_method
+                  )}
+                </p>
+              `
+              : ''
+            }
+
+            ${
+              article.source
+              ? `
+                <p>
+                  <strong>Source:</strong>
+                  ${escapeHTML(
+                    article.source
+                  )}
+                </p>
+              `
+              : ''
+            }
+
+            ${
+              article.sources
+              ? `
+                <p>
+                  <strong>Sources:</strong>
+                  ${escapeHTML(
+                    article.sources
                   )}
                 </p>
               `
@@ -1437,7 +1660,7 @@ function openArticle(id){
           ? `
             <button
               class="btn"
-              id="audioArticle"
+              id="audioButton"
             >
               🔊 አዳምጥ
             </button>
@@ -1471,7 +1694,11 @@ function openArticle(id){
   `;
 
 
-  $('backTopic').onclick=()=>{
+  /*
+     BACK
+  */
+
+  $('backArticle').onclick=()=>{
 
     if(currentTopicId){
 
@@ -1500,8 +1727,7 @@ function openArticle(id){
 
       try{
 
-        await navigator.clipboard
-          .writeText(text);
+        await navigator.clipboard.writeText(text);
 
         $('copyArticle').textContent =
           '✓ ተቀድቷል';
@@ -1555,9 +1781,7 @@ function openArticle(id){
         try{
 
           await navigator.clipboard
-            .writeText(
-              location.href
-            );
+            .writeText(location.href);
 
           alert(
             'የገጹ አድራሻ ተቀድቷል።'
@@ -1575,7 +1799,7 @@ function openArticle(id){
   */
 
   const audioButton =
-    $('audioArticle');
+    $('audioButton');
 
   const audioControl =
     $('articleAudio');
@@ -1754,7 +1978,8 @@ function performSearch(){
 
           <p>
             ${escapeHTML(
-              getSummary(article)
+              getSummary(article) ||
+              getContentPreview(article)
             )}
           </p>
 
@@ -1801,24 +2026,15 @@ function showPanel(type){
         የመልክ ቅንብሮች
       </p>
 
-      <button
-        class="btn"
-        id="lightMode"
-      >
+      <button class="btn" id="lightMode">
         ☀️ Light Mode
       </button>
 
-      <button
-        class="btn"
-        id="darkMode"
-      >
+      <button class="btn" id="darkMode">
         🌙 Dark Mode
       </button>
 
-      <button
-        class="btn"
-        id="defaultMode"
-      >
+      <button class="btn" id="defaultMode">
         🔄 ነባሪ ቅንብር
       </button>
 
@@ -1968,13 +2184,6 @@ function showPanel(type){
         ክፍል ነው።
       </p>
 
-      <p>
-        ይህ የፊት ገጽ ነው፤
-        የAdmin የደህንነት ሥርዓት
-        በተለየ የአስተዳደር መዋቅር
-        መጠበቅ አለበት።
-      </p>
-
     `,
 
 
@@ -2034,9 +2243,7 @@ function showPanel(type){
 
     $('lightMode').onclick=()=>{
 
-      document.body
-        .classList
-        .remove('dark');
+      document.body.classList.remove('dark');
 
       localStorage.setItem(
         'sidaaman-theme',
@@ -2048,9 +2255,7 @@ function showPanel(type){
 
     $('darkMode').onclick=()=>{
 
-      document.body
-        .classList
-        .add('dark');
+      document.body.classList.add('dark');
 
       localStorage.setItem(
         'sidaaman-theme',
@@ -2062,9 +2267,7 @@ function showPanel(type){
 
     $('defaultMode').onclick=()=>{
 
-      document.body
-        .classList
-        .remove('dark');
+      document.body.classList.remove('dark');
 
       localStorage.removeItem(
         'sidaaman-theme'
@@ -2083,16 +2286,14 @@ function showPanel(type){
 
 $('menuBtn').onclick=()=>{
 
-  $('menuDialog')
-    .showModal();
+  $('menuDialog').showModal();
 
 };
 
 
 $('closeMenu').onclick=()=>{
 
-  $('menuDialog')
-    .close();
+  $('menuDialog').close();
 
 };
 
@@ -2109,11 +2310,9 @@ document
 
       if(type==='search'){
 
-        $('menuDialog')
-          .close();
+        $('menuDialog').close();
 
-        $('searchInput')
-          .focus();
+        $('searchInput').focus();
 
         return;
 
@@ -2128,7 +2327,7 @@ document
 
 
 /* =========================================================
-   HOME / SEARCH EVENTS
+   HOME / SEARCH
    ========================================================= */
 
 $('homeBtn').onclick =
@@ -2155,111 +2354,279 @@ $('searchInput')
 
 
 /* =========================================================
-   LOAD SUPABASE DATA
+   SUPABASE FETCH
+   ========================================================= */
+
+
+/*
+   Supabase REST ላይ ብዙ records ሲኖሩ
+   1000-row limit እንዳያቋርጠው
+   pagination እንጠቀማለን።
+*/
+
+async function fetchAllArticles(){
+
+  const pageSize=1000;
+
+  let from=0;
+
+  const all=[];
+
+  while(true){
+
+    const to =
+      from + pageSize - 1;
+
+
+    const result =
+      await db
+        .from('sidama_articles')
+        .select('*')
+        .eq(
+          'editorial_status',
+          'published'
+        )
+        .order(
+          'sort_order',
+          {
+            ascending:true,
+            nullsFirst:false
+          }
+        )
+        .range(from,to);
+
+
+    if(result.error){
+
+      throw new Error(
+        result.error.message
+      );
+
+    }
+
+
+    const rows =
+      result.data || [];
+
+
+    all.push(...rows);
+
+
+    if(rows.length < pageSize){
+
+      break;
+
+    }
+
+
+    from += pageSize;
+
+  }
+
+
+  return all;
+
+}
+
+
+/*
+   Topics ላይም pagination እንጠቀማለን።
+*/
+
+async function fetchAllTopics(){
+
+  const pageSize=1000;
+
+  let from=0;
+
+  const all=[];
+
+  while(true){
+
+    const to =
+      from + pageSize - 1;
+
+
+    const result =
+      await db
+        .from('sidama_topics')
+        .select('*')
+        .eq(
+          'is_active',
+          true
+        )
+        .order(
+          'sort_order',
+          {
+            ascending:true,
+            nullsFirst:false
+          }
+        )
+        .range(from,to);
+
+
+    if(result.error){
+
+      throw new Error(
+        result.error.message
+      );
+
+    }
+
+
+    const rows =
+      result.data || [];
+
+
+    all.push(...rows);
+
+
+    if(rows.length < pageSize){
+
+      break;
+
+    }
+
+
+    from += pageSize;
+
+  }
+
+
+  return all;
+
+}
+
+
+/* =========================================================
+   LOAD DATA WITH RETRY
    ========================================================= */
 
 async function loadData(){
 
-  try{
+  $('view').innerHTML=`
 
-    const [
-      topicsResult,
-      articlesResult
-    ] = await Promise.all([
+    <div class="notice loading">
+      ⏳ መረጃውን በመጫን ላይ…
+    </div>
 
-      db
-        .from('sidama_topics')
-        .select('*')
-        .eq('is_active',true)
-        .order('sort_order'),
+  `;
 
 
-      db
-        .from('sidama_articles')
-        .select('*')
-        .eq('editorial_status','published')
-        .order('sort_order')
-        .limit(1000)
+  const maxAttempts=3;
 
-    ]);
+  let lastError=null;
 
 
-    if(topicsResult.error){
+  for(
+    let attempt=1;
+    attempt<=maxAttempts;
+    attempt++
+  ){
 
-      throw new Error(
-        topicsResult.error.message
+    try{
+
+      const [
+        loadedTopics,
+        loadedArticles
+      ] = await Promise.all([
+
+        fetchAllTopics(),
+
+        fetchAllArticles()
+
+      ]);
+
+
+      topics =
+        loadedTopics || [];
+
+
+      articles =
+        loadedArticles || [];
+
+
+      console.log(
+        'SIDAAMAN ENWEQ:',
+        topics.length,
+        'topics /',
+        articles.length,
+        'published articles'
       );
 
-    }
+
+      renderLanguages();
+
+      showHome();
+
+      return;
 
 
-    if(articlesResult.error){
+    }catch(error){
 
-      throw new Error(
-        articlesResult.error.message
+      lastError=error;
+
+      console.error(
+        'Load attempt',
+        attempt,
+        error
       );
 
+
+      if(attempt < maxAttempts){
+
+        await new Promise(resolve=>
+
+          setTimeout(
+            resolve,
+            800 * attempt
+          )
+
+        );
+
+      }
+
     }
-
-
-    topics =
-      topicsResult.data || [];
-
-
-    articles =
-      articlesResult.data || [];
-
-
-    console.log(
-      'SIDAAMAN ENWEQ:',
-      topics.length,
-      'topics /',
-      articles.length,
-      'published articles'
-    );
-
-
-    renderLanguages();
-
-    showHome();
-
-
-  }catch(error){
-
-    console.error(
-      'SIDAAMAN ENWEQ ERROR:',
-      error
-    );
-
-
-    $('view').innerHTML=`
-
-      <div class="notice">
-
-        <strong>
-          መረጃውን መጫን አልተቻለም።
-        </strong>
-
-        <br><br>
-
-        Supabase ግንኙነት ወይም
-        የመረጃ ጠያቂው ላይ
-        ችግር ተፈጥሯል።
-
-        <br><br>
-
-        <button
-          class="btn primary"
-          onclick="location.reload()"
-        >
-          🔄 እንደገና ሞክር
-        </button>
-
-      </div>
-
-    `;
 
   }
+
+
+  console.error(
+    'SIDAAMAN ENWEQ FINAL ERROR:',
+    lastError
+  );
+
+
+  $('view').innerHTML=`
+
+    <div class="notice">
+
+      <strong>
+        መረጃውን መጫን አልተቻለም።
+      </strong>
+
+      <br><br>
+
+      Supabase ግንኙነት ወይም
+      የመረጃ ጠያቂው ላይ
+      ችግር ተፈጥሯል።
+
+      <br><br>
+
+      <button
+        class="btn primary"
+        id="retryLoad"
+      >
+        🔄 እንደገና ሞክር
+      </button>
+
+    </div>
+
+  `;
+
+
+  $('retryLoad').onclick =
+    loadData;
 
 }
 
@@ -2274,9 +2641,7 @@ if(
   ) === 'dark'
 ){
 
-  document.body
-    .classList
-    .add('dark');
+  document.body.classList.add('dark');
 
 }
 

@@ -2450,8 +2450,8 @@ async function fetchAllTopics(){
 
 
     const result =
-      await db
-        from('topics')
+  await db
+  .from('topics')
   .select('*')
   .eq(
     'is_published',

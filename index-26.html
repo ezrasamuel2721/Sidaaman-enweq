@@ -2451,19 +2451,19 @@ async function fetchAllTopics(){
 
     const result =
       await db
-        .from('topics')
-        .select('*')
-        .eq(
-          'is_active',
-          true
-        )
-        .order(
-          'sort_order',
-          {
-            ascending:true,
-            nullsFirst:false
-          }
-        )
+        from('topics')
+  .select('*')
+  .eq(
+    'is_published',
+    true
+  )
+  .order(
+    'sort_order',
+    {
+      ascending:true,
+      nullsFirst:false
+    }
+  )
         .range(from,to);
 
 

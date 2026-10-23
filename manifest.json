@@ -1,7 +1,7 @@
 {
   "name": "ሲዳማን እንወቅ",
   "short_name": "ሲዳማን እንወቅ",
-  "description": "የሲዳማ ታሪክ፣ ባህል፣ ቋንቋ እና ማንነት የሚያስረዳ ዲጂታል መድረክ",
+  "description": "የሲዳማ ታሪክ፣ ባህል፣ ቋንቋ እና ማንነት የሚያስረዳ የኦፍላይን መተግበሪያ",
   "lang": "am",
   "dir": "ltr",
   "start_url": "./",
@@ -9,18 +9,5 @@
   "display": "standalone",
   "background_color": "#f4f8f5",
   "theme_color": "#006b3c",
-  "icons": [
-    {
-      "src": "./icon-192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "./icon-512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    }
-  ]
+  "icons": []
 }
